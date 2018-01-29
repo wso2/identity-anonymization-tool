@@ -1,4 +1,4 @@
-package main.java.org.wso2.carbon;
+package org.wso2.carbon;
 
 public class LogProcessorConstants {
 
