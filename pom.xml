@@ -31,6 +31,7 @@
 
     <modules>
         <module>components/org.wso2.carbon.identity.forgetme.sql</module>
+        <module>components/org.wso2.carbon</module>
     </modules>
 
 </project>
