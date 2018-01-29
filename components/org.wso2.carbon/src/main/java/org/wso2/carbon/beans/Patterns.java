@@ -6,7 +6,7 @@
 //
 
 
-package main.java.org.wso2.carbon.beans;
+package org.wso2.carbon.beans;
 
 import java.util.ArrayList;
 import java.util.List;

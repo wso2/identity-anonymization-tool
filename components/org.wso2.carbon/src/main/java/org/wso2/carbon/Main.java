@@ -1,4 +1,4 @@
-package main.java.org.wso2.carbon;
+package org.wso2.carbon;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
@@ -29,8 +29,7 @@ import java.util.regex.Pattern;
 public class Main {
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
-    private final static String directory =
-            "/home/sathya/Downloads/VATTENFALLPROD-33/wso2is-5.3.0/repository/logs/logs";
+    private final static String directory = "path/to/directory";
 
     //Java characters that have to be escaped in regular expressions are: \.[]{}()*+-?^$|
 
