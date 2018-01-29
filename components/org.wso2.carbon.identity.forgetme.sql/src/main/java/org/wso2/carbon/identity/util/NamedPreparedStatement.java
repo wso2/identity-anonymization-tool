@@ -48,14 +48,14 @@ public class NamedPreparedStatement {
         int pos;
         while ((pos = sqlQuery.indexOf('`')) != -1) {
 
-            int end = sqlQuery.substring(pos+1).indexOf('`');
+            int end = sqlQuery.substring(pos + 1).indexOf('`');
             if (end == -1) {
                 throw new SQLException("Cannot find the end of the placeholder.");
             } else {
                 end += pos;
             }
 
-            fields.add(sqlQuery.substring(pos + 1, end));
+            fields.add(sqlQuery.substring(pos + 1, end + 1));
             StringBuilder builder = new StringBuilder("?");
 
             if (repetition.get(sqlQuery.substring(pos + 1, end)) != null) {
@@ -65,7 +65,7 @@ public class NamedPreparedStatement {
             }
 
             sqlQuery = String.format("%s %s %s", sqlQuery.substring(0, pos), builder.toString(),
-                    sqlQuery.substring(end + 1));
+                    sqlQuery.substring(end + 2));
         }
         preparedStatement = connection.prepareStatement(sqlQuery);
     }
@@ -140,6 +140,10 @@ public class NamedPreparedStatement {
     }
 
     private int getIndex(String name) {
-        return fields.indexOf(name) + 1;
+
+        int index = fields.indexOf(name);
+        fields.set(index, "-");
+
+        return index + 1;
     }
 }

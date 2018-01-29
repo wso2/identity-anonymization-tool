@@ -21,12 +21,13 @@ package org.wso2.carbon.identity;
 import org.wso2.carbon.identity.sql.SQLQuery;
 
 /**
- * Created by jayanga on 1/29/18.
+ * Represents a SQL query that is bounded to an user.
  */
 public class UserSQLQuery {
 
     private UserIdentifier userIdentifier;
     private SQLQuery sqlQuery;
+    private int numberOfPlacesToReplace;
 
     public UserIdentifier getUserIdentifier() {
         return userIdentifier;
@@ -42,5 +43,13 @@ public class UserSQLQuery {
 
     public void setSqlQuery(SQLQuery sqlQuery) {
         this.sqlQuery = sqlQuery;
+    }
+
+    public int getNumberOfPlacesToReplace() {
+        return numberOfPlacesToReplace;
+    }
+
+    public void setNumberOfPlacesToReplace(int numberOfPlacesToReplace) {
+        this.numberOfPlacesToReplace = numberOfPlacesToReplace;
     }
 }

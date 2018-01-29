@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity;
 
 /**
- * Created by jayanga on 1/29/18.
+ * Represents an user that should be replaced in the DB table.
  */
 public class UserIdentifier {
 

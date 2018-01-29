@@ -19,7 +19,7 @@
 package org.wso2.carbon.identity.sql;
 
 /**
- * Created by jayanga on 1/29/18.
+ * Represents a SQL query.
  */
 public class SQLQuery {
 

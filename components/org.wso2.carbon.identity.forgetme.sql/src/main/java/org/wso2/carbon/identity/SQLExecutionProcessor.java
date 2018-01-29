@@ -46,7 +46,8 @@ public class SQLExecutionProcessor implements Processor<UserSQLQuery> {
     public SQLExecutionProcessor() throws DataSourceException {
 
         DataSourceManager dataSourceManager = DataSourceManager.getInstance();
-        Path configFilePath = Paths.get("src", "main", "resources", "conf", "datasources");
+        Path configFilePath = Paths.get("components", "org.wso2.carbon.identity.forgetme.sql", "src", "main",
+                "resources", "conf", "datasources");
         DataSourceService dataSourceService = new DataSourceServiceImpl();
         String analyticsDataSourceName = "WSO2_CARBON_DB";
 
@@ -62,7 +63,10 @@ public class SQLExecutionProcessor implements Processor<UserSQLQuery> {
             namedPreparedStatement.setString(USERNAME, userSQLQuery.getUserIdentifier().getUsername());
             namedPreparedStatement.setString(USER_STORE_DOMAIN, userSQLQuery.getUserIdentifier().getUserStoreDomain());
             namedPreparedStatement.setString(TENANT_DOMAIN, userSQLQuery.getUserIdentifier().getTenantDomain());
-            namedPreparedStatement.setString(PSEUDONYM, userSQLQuery.getUserIdentifier().getPseudonym());
+
+            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(); i++) {
+                namedPreparedStatement.setString(PSEUDONYM, userSQLQuery.getUserIdentifier().getPseudonym());
+            }
 
             namedPreparedStatement.getPreparedStatement().execute();
         }
