@@ -22,6 +22,7 @@ import org.wso2.carbon.datasource.core.DataSourceManager;
 import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.datasource.core.impl.DataSourceServiceImpl;
+import org.wso2.carbon.identity.exception.CompliancyToolException;
 import org.wso2.carbon.identity.util.NamedPreparedStatement;
 
 import java.nio.file.Path;
@@ -43,28 +44,31 @@ public class SQLExecutionProcessor implements Processor<UserSQLQuery> {
 
     private DataSource dataSource;
 
-    public SQLExecutionProcessor() throws DataSourceException {
+    public SQLExecutionProcessor(DataSourceConfig dataSourceConfig) throws CompliancyToolException {
 
         DataSourceManager dataSourceManager = DataSourceManager.getInstance();
-        Path configFilePath = Paths.get("components", "org.wso2.carbon.identity.forgetme.sql", "src", "main",
-                "resources", "conf", "datasources");
         DataSourceService dataSourceService = new DataSourceServiceImpl();
-        String analyticsDataSourceName = "WSO2_CARBON_DB";
 
-        dataSourceManager.initDataSources(configFilePath.toFile().getAbsolutePath());
-        dataSource = (DataSource) dataSourceService.getDataSource(analyticsDataSourceName);
+        try {
+            dataSourceManager.initDataSources(dataSourceConfig.getDataSourceConfigPath().toFile().getAbsolutePath());
+            dataSource = (DataSource) dataSourceService.getDataSource(dataSourceConfig.getDataSourceName());
+        } catch (DataSourceException e) {
+            throw new CompliancyToolException("Error occurred while initializing the data source.", e);
+        }
     }
 
     private void runSQL(UserSQLQuery userSQLQuery) throws SQLException {
 
         try (Connection connection = dataSource.getConnection()) {
+
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(connection, userSQLQuery
                     .getSqlQuery().toString());
+
             namedPreparedStatement.setString(USERNAME, userSQLQuery.getUserIdentifier().getUsername());
             namedPreparedStatement.setString(USER_STORE_DOMAIN, userSQLQuery.getUserIdentifier().getUserStoreDomain());
             namedPreparedStatement.setString(TENANT_DOMAIN, userSQLQuery.getUserIdentifier().getTenantDomain());
 
-            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(); i++) {
+            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(PSEUDONYM); i++) {
                 namedPreparedStatement.setString(PSEUDONYM, userSQLQuery.getUserIdentifier().getPseudonym());
             }
 

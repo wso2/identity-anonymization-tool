@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.identity.sql;
 
+import org.wso2.carbon.identity.exception.SQLReaderException;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -51,7 +53,7 @@ public class SQLFileReader {
      * @return List of @see SQLQuery.
      * @throws IOException Error while reading the files.
      */
-    public List<SQLQuery> readAllQueries() throws IOException {
+    public List<SQLQuery> readAllQueries() throws SQLReaderException {
 
         List<SQLQuery> sqlQueries = new ArrayList<>();
         try (Stream<Path> pathStream = Files.walk(path)) {
@@ -64,6 +66,8 @@ public class SQLFileReader {
                             sqlQueries.add(sqlQuery);
                         }
                     }));
+        } catch (IOException e) {
+            throw new SQLReaderException("Error occurred while reading the SQL files.", e);
         }
         return sqlQueries;
     }

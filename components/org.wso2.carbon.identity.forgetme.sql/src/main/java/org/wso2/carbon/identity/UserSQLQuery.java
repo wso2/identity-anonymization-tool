@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.identity;
 
+import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.identity.sql.SQLQuery;
 
 /**
@@ -27,7 +28,6 @@ public class UserSQLQuery {
 
     private UserIdentifier userIdentifier;
     private SQLQuery sqlQuery;
-    private int numberOfPlacesToReplace;
 
     public UserIdentifier getUserIdentifier() {
         return userIdentifier;
@@ -45,11 +45,8 @@ public class UserSQLQuery {
         this.sqlQuery = sqlQuery;
     }
 
-    public int getNumberOfPlacesToReplace() {
-        return numberOfPlacesToReplace;
+    public int getNumberOfPlacesToReplace(String substring) {
+        return StringUtils.countMatches(sqlQuery.getSqlQuery(), substring);
     }
 
-    public void setNumberOfPlacesToReplace(int numberOfPlacesToReplace) {
-        this.numberOfPlacesToReplace = numberOfPlacesToReplace;
-    }
 }

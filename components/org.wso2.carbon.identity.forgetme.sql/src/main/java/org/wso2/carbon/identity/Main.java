@@ -18,11 +18,10 @@
 
 package org.wso2.carbon.identity;
 
-import org.wso2.carbon.datasource.core.exception.DataSourceException;
+import org.wso2.carbon.identity.exception.CompliancyToolException;
 import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
 
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,14 +32,14 @@ import java.util.UUID;
  */
 public class Main {
 
-    public static void main(String[] args) throws DataSourceException, IOException {
+    public static void main(String[] args) throws CompliancyToolException {
 
         SQLFileReader sqlFileReader = new SQLFileReader(Paths.get("components", "org.wso2.carbon.identity.forgetme.sql",
                 "src", "main", "resources", "sql"));
         List<SQLQuery> sqlQueries = sqlFileReader.readAllQueries();
 
         UserIdentifier userIdentifier = new UserIdentifier();
-        userIdentifier.setUsername("admin");
+        userIdentifier.setUsername("6ab705a7-8347-42eb-bf0c-ddc2d7f71765");
         userIdentifier.setUserStoreDomain("PRIMARY");
         userIdentifier.setTenantDomain("-1234");
         userIdentifier.setPseudonym(UUID.randomUUID().toString());
@@ -50,11 +49,14 @@ public class Main {
             UserSQLQuery userSQLQuery = new UserSQLQuery();
             userSQLQuery.setSqlQuery(sqlQuery);
             userSQLQuery.setUserIdentifier(userIdentifier);
-            userSQLQuery.setNumberOfPlacesToReplace(2);
             userSQLQueryList.add(userSQLQuery);
         }
 
-        Processor<UserSQLQuery> sqlExecutionProcessor = new SQLExecutionProcessor();
+        DataSourceConfig dataSourceConfig = new DataSourceConfig(Paths.get("components",
+                "org.wso2.carbon.identity.forgetme.sql", "src", "main", "resources", "conf", "datasources"),
+                "WSO2_CARBON_DB");
+
+        Processor<UserSQLQuery> sqlExecutionProcessor = new SQLExecutionProcessor(dataSourceConfig);
         sqlExecutionProcessor.execute(userSQLQueryList);
     }
 }
