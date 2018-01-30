@@ -14,6 +14,11 @@
             <artifactId>commons-text</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -43,7 +48,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.wso2.carbon.Main</mainClass>
+                    <mainClass>org.wso2.carbon.LogProcessor</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -102,7 +107,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
-                                org.wso2.carbon.Main
+                                org.wso2.carbon.LogProcessor
                             </mainClass>
                         </manifest>
                         <manifestEntries>

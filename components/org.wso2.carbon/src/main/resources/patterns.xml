@@ -27,7 +27,7 @@
     </pattern>
 
     <pattern key="pattern2">
-        <detectPattern>(.)*${userstoreDomain}(/{0}|/{1})${username}(\s)*\[${tenantDomain}\](.)*</detectPattern>
+        <detectPattern>(.)*${userstoreDomain}(/{0}|/{1})${username}(\s)*\[${tenantId}\](.)*</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
 
