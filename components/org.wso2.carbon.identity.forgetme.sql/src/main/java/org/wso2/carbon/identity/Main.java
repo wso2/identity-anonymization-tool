@@ -21,6 +21,7 @@ package org.wso2.carbon.identity;
 import org.wso2.carbon.identity.exception.CompliancyToolException;
 import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
+import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;

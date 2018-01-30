@@ -1,0 +1,15 @@
+{
+  "sources" : [
+    {
+      "name" : "carbon",
+      "type" : "jdbc",
+      "datasource" : {"jndi" : "/foo"}
+      "directory" : "/db/carbon"
+    },
+    {
+      "name" : "carbon.log",
+      "type" : "log-file",
+      "directory" : "/log/carbon"
+    }
+  ]
+}
