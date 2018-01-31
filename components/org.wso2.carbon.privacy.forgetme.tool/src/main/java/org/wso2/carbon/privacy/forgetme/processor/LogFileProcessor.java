@@ -1,5 +1,7 @@
 package org.wso2.carbon.privacy.forgetme.processor;
 
+import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;

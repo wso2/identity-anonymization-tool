@@ -1,12 +1,15 @@
 package org.wso2.carbon.identity.instructions;
 
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JdbcForgetMeInstructionReader implements InstructionReader {
 
@@ -16,13 +19,18 @@ public class JdbcForgetMeInstructionReader implements InstructionReader {
     }
 
     @Override
-    public ForgetMeInstruction read(File contendDirectory, Environment environment) {
+    public List<ForgetMeInstruction> read(Path path, Environment environment) {
         System.out.println("Reading JdbcForgetMeInstructionReader");
+        List<ForgetMeInstruction> result = new ArrayList<>();
 
-        Path sqlDir = Paths.get(contendDirectory.getAbsolutePath(), "sql");
-        Path dataSourceConfigDir = Paths.get(contendDirectory.getAbsolutePath(), "datasources");
-        RdbmsForgetMeInstruction forgetMeInstruction = new RdbmsForgetMeInstruction(sqlDir, dataSourceConfigDir,
-                "WSO2_CARBON_DB");
-        return forgetMeInstruction;
+        File contendDirectory = path.toFile();
+        File[] subDirs = contendDirectory.listFiles((FileFilter) DirectoryFileFilter.INSTANCE);
+        for (int i = 0; i < subDirs.length; i++) {
+            Path subPath = subDirs[i].toPath();
+            RdbmsForgetMeInstruction forgetMeInstruction = new RdbmsForgetMeInstruction(subPath, "WSO2_CARBON_DB");
+            result.add(forgetMeInstruction);
+        }
+
+        return result;
     }
 }

@@ -5,16 +5,15 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResultSet;
-import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
+import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
+import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
+import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,82 +23,73 @@ import java.util.UUID;
  */
 public class ForgetMeTool {
 
+    private ForgetMeExecutionEngine forgetMeExecutionEngine;
+
     public static void main(String[] args) throws Exception {
+
         Options options = new Options();
 
         options.addOption("d", true, "Directory to scan");
         options.addOption("ch", true, "Carbon Home");
+        options.addOption("U", true, "User Name");
+        options.addOption("D", true, "User Domain");
+        options.addOption("T", true, "Tenant Domain");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
+        String homeDir = null;
         if (cmd.hasOption("d")) {
-            String homeDir = cmd.getOptionValue("d");
-            ForgetMeTool forgetMeTool = new ForgetMeTool();
-            forgetMeTool.process(homeDir);
+            homeDir = cmd.getOptionValue("d");
+
         } else {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("forget-me", options);
+            printError(options);
+            return;
         }
+        UserIdentifier userIdentifier = null;
+        if (cmd.hasOption("U")) {
+            String userName = cmd.getOptionValue("U");
+            String domainName = cmd.getOptionValue("D", "PRIMARY");
+            String tenantName = cmd.getOptionValue("T", "-1234");
+            userIdentifier = createUserIdentifier(userName, domainName, tenantName);
+        } else {
+            printError(options);
+            return;
+        }
+        ForgetMeTool forgetMeTool = new ForgetMeTool();
+        forgetMeTool.process(homeDir, userIdentifier);
     }
 
-    public ForgetMeResultSet process(String homeDir) {
+    private static void printError(Options options) {
 
-        UserIdentifier userIdentifier = new UserIdentifier();
-        userIdentifier.setUsername("admin");
-        userIdentifier.setUserStoreDomain("PRIMARY");
-        userIdentifier.setTenantDomain("-1234");
-        userIdentifier.setPseudonym(UUID.randomUUID().toString());
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp("forget-me", options);
+    }
 
-        ForgetMeResultSet forgetMeResultSet = new ForgetMeResultSet();
+    public ForgetMeResult process(String homeDir, UserIdentifier userIdentifier) throws ForgetMeExecutionException {
+
+        ForgetMeResult forgetMeResult;
+        ConfigReader configReader = ConfigReader.getInstance();
+        Environment environment = new SystemEnv();
         try {
             File home = new File(homeDir).getAbsoluteFile().getCanonicalFile();
-            if (!home.isDirectory()) {
-                //TODO:
-                System.out.println("Can not proceed as the given directory is not a real directory : " + home);
-            }
-
-            List<ForgetMeInstruction> forgetMeInstructions = scan(home);
-
-            Environment environment = new SystemEnv();
-            forgetMeInstructions.stream().forEach(i -> i.execute(environment, userIdentifier));
+            SystemConfig systemConfig = configReader.readSystemConfig(new File(home, "config.json"));
+            forgetMeExecutionEngine = new ForgetMeExecutionEngine(userIdentifier, environment, systemConfig);
+            forgetMeResult = forgetMeExecutionEngine.execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ForgetMeExecutionException("Could not load config from directory: " + homeDir, e, "E_INIT", null);
         }
-
-        return forgetMeResultSet;
+        return forgetMeResult;
     }
 
-    private List<ForgetMeInstruction> scan(File home) {
-        List<ForgetMeInstruction> forgetMeInstructions = new ArrayList<>();
-        List<ForgetMeInstruction> fileInstructions = scanFileConfigs(home);
-        forgetMeInstructions.addAll(fileInstructions);
-        String[] directories = home.list((current, name) -> new File(current, name).isDirectory());
-        for (String moduleDir : directories) {
-            System.out.println("Scanning dir : " + moduleDir);
-            File subDir = new File(home, moduleDir);
-            List<ForgetMeInstruction> subInstructions = scan(subDir);
-            forgetMeInstructions.addAll(subInstructions);
-        }
-        return forgetMeInstructions;
+    private static UserIdentifier createUserIdentifier(String userName, String domainName, String tenantName) {
+
+        UserIdentifier userIdentifier = new UserIdentifier();
+        userIdentifier.setUsername(userName);
+        userIdentifier.setUserStoreDomain(domainName);
+        userIdentifier.setTenantDomain(tenantName);
+        userIdentifier.setPseudonym(UUID.randomUUID().toString());
+        return userIdentifier;
     }
 
-    private List<ForgetMeInstruction> scanFileConfigs(File home) {
-        List<ForgetMeInstruction> forgetMeInstructions = new ArrayList<>();
-        String[] files = home.list((current, name) -> {
-            File f = new File(current, name);
-            return f.isFile() && name.endsWith(".json");
-        });
-
-        for (String fileName : files) {
-            File file = new File(home, fileName);
-            System.out.println("Loading file : " + file.getAbsolutePath());
-            ForgetMeInstruction instruction = ConfigReader.getInstance().loadInstruction(file);
-            if (instruction != null) {
-                forgetMeInstructions.add(instruction);
-            }
-        }
-
-        return forgetMeInstructions;
-    }
 }

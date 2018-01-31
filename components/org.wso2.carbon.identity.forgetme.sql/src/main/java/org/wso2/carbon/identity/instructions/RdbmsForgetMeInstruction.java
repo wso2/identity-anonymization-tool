@@ -10,7 +10,8 @@ import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResultSet;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 import java.nio.file.Path;
@@ -23,15 +24,16 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
     private Path dataSourceConfigDir;
     private String datasourceName;
 
-    public RdbmsForgetMeInstruction(Path sqlDir, Path dataSourceConfigDir, String datasourceName) {
+    public RdbmsForgetMeInstruction(Path sqlDir, String datasourceName) {
         this.sqlDir = sqlDir;
-        this.dataSourceConfigDir = dataSourceConfigDir;
         this.datasourceName = datasourceName;
     }
 
     @Override
-    public ForgetMeResultSet execute(Environment environment, UserIdentifier userIdentifier) {
+    public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
+            Environment environment) {
         System.out.println("Executing RdbmsForgetMeInstruction");
+        DataSourceConfig dataSourceConfig = ((DatasourceProcessorConfig) processorConfig).getDataSourceConfig(datasourceName);
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
 
         List<SQLQuery> sqlQueries = null;
@@ -48,15 +50,13 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
             userSQLQuery.setUserIdentifier(userIdentifier);
             userSQLQueryList.add(userSQLQuery);
         }
-        DataSourceConfig dataSourceConfig = null;
         try {
-            dataSourceConfig = new DataSourceConfig(dataSourceConfigDir, datasourceName);
             Processor<UserSQLQuery> sqlExecutionProcessor = new SQLExecutionProcessor(dataSourceConfig);
             sqlExecutionProcessor.execute(userSQLQueryList);
         } catch (CompliancyToolException e) {
             e.printStackTrace();
         }
 
-        return new ForgetMeResultSet();
+        return new ForgetMeResult();
     }
 }
