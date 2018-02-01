@@ -1,0 +1,24 @@
+{
+  "processors" : [
+    "rdbms"
+  ],
+  "directories": [
+    {
+      "dir": "log",
+      "type": "log-file",
+      "processor" : "log-file"
+    },
+    {
+      "dir": "sql",
+      "type": "rdbms",
+      "processor" : "rdbms"
+    }
+  ],
+  "extensions": [
+    {
+      "dir": "datasource",
+      "type": "datasource",
+      "processor" : "rdbms"
+    }
+  ]
+}

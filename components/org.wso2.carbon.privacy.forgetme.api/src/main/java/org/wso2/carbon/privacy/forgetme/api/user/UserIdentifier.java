@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.identity;
+package org.wso2.carbon.privacy.forgetme.api.user;
 
 /**
  * Represents an user that should be replaced in the DB table.

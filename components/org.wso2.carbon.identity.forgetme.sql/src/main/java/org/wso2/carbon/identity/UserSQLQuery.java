@@ -20,6 +20,7 @@ package org.wso2.carbon.identity;
 
 import org.apache.commons.lang.StringUtils;
 import org.wso2.carbon.identity.sql.SQLQuery;
+import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 /**
  * Represents a SQL query that is bounded to an user.

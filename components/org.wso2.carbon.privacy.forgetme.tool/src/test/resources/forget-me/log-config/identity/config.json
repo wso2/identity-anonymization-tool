@@ -1,0 +1,9 @@
+{
+  "type" : "rdbms",
+  "dataSources": [
+     "master-datasources.xml"
+  ],
+  "sqlFiles" : [
+     "idn-oauth2-accesstoken.sql"
+  ]
+}
