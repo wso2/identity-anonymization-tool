@@ -32,9 +32,24 @@
     </pattern>
 
     <pattern key="pattern3">
+        <detectPattern>(.)*${userstoreDomain}(/{0}|/{1})${username}(.)*${tenantDomain}(.)*</detectPattern>
+        <replacePattern>${username}@${tenantDomain}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern4">
         <detectPattern>
             (.)*(AuthenticatedUser|LoggedOutUser)(.)*${userstoreDomain}(/{0}|/{1})${username}(.)*(AuthenticatedUserTenantDomain|LoggedOutUserTenantDomain)(.)*${tenantDomain}(.)*
         </detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern5">
+        <detectPattern>(.)*user(\s)*:(.)*${userstoreDomain}(/{0}|/{1})${username}(.)*in(\s)tenant(\s)*:(.)*${tenantDomain}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern6">
+        <detectPattern>(.)*User,(.)*${username}@${tenantDomain}(.)*is(\s)not(\s)exist(\s)in(.)*${userstoreDomain}(.)*</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
 

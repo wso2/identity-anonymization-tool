@@ -6,7 +6,7 @@
 //
 
 
-package org.wso2.carbon.beans;
+package org.wso2.carbon.privacy.forgetme.logs.beans;
 
 import javax.xml.bind.annotation.XmlRegistry;
 

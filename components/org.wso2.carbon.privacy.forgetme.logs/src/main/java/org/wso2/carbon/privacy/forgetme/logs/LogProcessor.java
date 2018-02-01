@@ -1,8 +1,8 @@
-package org.wso2.carbon;
+package org.wso2.carbon.privacy.forgetme.logs;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
-import org.wso2.carbon.beans.Patterns;
+import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -28,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
+import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
 
 public class LogProcessor {
@@ -37,9 +38,10 @@ public class LogProcessor {
 
     private static Logger log = Logger.getLogger(LogProcessor.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws LogProcessorException {
 
         if (args.length != 3) {
+
             // Expected arguments are not provided.
             log.info("Usage: java -jar GDPR-Compliance-LogProcessor-1.0-SNAPSHOT.jar <username> <tenant-domain>" +
                     " <userstore-domain>");
@@ -47,10 +49,17 @@ public class LogProcessor {
         } else {
             log.info("User details: " + args[0] + " " + args[1] + " " + args[2]);
         }
+        execute(args[0], args[1], args[2]);
+    }
 
-        Map<String, String> templatePatternData = getTemplatePatternData(args[0], args[1], args[2]);
+    private static void execute(String username, String tenantDomain, String userstoreDomain) throws
+            LogProcessorException {
+
+        Map<String, String> templatePatternData = getTemplatePatternData(username, tenantDomain, userstoreDomain);
+
         // Generate random string for the username.
         String randomUUID = UUID.randomUUID().toString();
+        LogProcessorReport logProcessorReport = new LogProcessorReport();
 
         // Reading the list of patterns to be searched in logs from external configuration file.
         Patterns patterns = readXML("conf/patterns.xml");
@@ -81,13 +90,22 @@ public class LogProcessor {
                         Matcher matcher = regexp.matcher(line);
 
                         if (matcher.find()) {
+
                             // Pattern match hit.
                             patternMatched = true;
-                            log.info("Found [" + matcher.group() + "] starting at "
-                                    + matcher.start() + " and ending at " + (matcher.end() - 1));
+                            String message;
                             String formattedReplacePattern = StrSubstitutor.replace(pattern.getReplacePattern(),
                                     templatePatternData);
-                            replacement = replacement.replaceAll(formattedReplacePattern, randomUUID);
+                            if (StringUtils.isNoneEmpty(formattedReplacePattern)) {
+                                replacement = replacement.replaceAll(formattedReplacePattern, randomUUID);
+                                message = "Found [" + matcher.group() + "] starting at "
+                                        + matcher.start() + " and ending at " + (matcher.end() - 1);
+                                logProcessorReport.addToReport(lineReader.getLineNumber(), message, true);
+
+                            } else {
+                                message = "Found a possible match for the user identifier";
+                                logProcessorReport.addToReport(lineReader.getLineNumber(), message, false);
+                            }
                         }
                     }
                     if (patternMatched) {
@@ -106,23 +124,26 @@ public class LogProcessor {
         }
     }
 
-
-    private static Patterns readXML(String path) throws JAXBException {
+    private static Patterns readXML(String path) throws LogProcessorException {
 
         log.info("Reading pattern configuration file...");
-        JAXBContext jc = JAXBContext.newInstance(Patterns.class);
+        JAXBContext jaxbContext;
+        try {
+            jaxbContext = JAXBContext.newInstance(Patterns.class);
+            File xml = new File(path);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            Patterns patterns = (Patterns) unmarshaller.unmarshal(xml);
 
-        File xml = new File(path);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        Patterns patterns = (Patterns) unmarshaller.unmarshal(xml);
-
-        Marshaller marshaller = jc.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        log.info("Read successful.");
-        return patterns;
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            log.info("Read successful.");
+            return patterns;
+        } catch (JAXBException e) {
+            throw new LogProcessorException("Error occurred while reading pattern configuration file.");
+        }
     }
 
-    private static void replaceFile(Path filePath) {
+    private static void replaceFile(Path filePath) throws LogProcessorException {
 
         String fileName = filePath.getFileName().toString();
         if (Files.exists(filePath)) {
@@ -136,12 +157,12 @@ public class LogProcessor {
                 log.info("Renamed the temp file '" + fileName + ".temp' to '" + fileName + "'");
 
             } catch (IOException ex) {
-                log.error("Error occurred while delete/rename file operation.", ex);
+                throw new LogProcessorException("Error occurred while delete/rename file operation.", ex);
             }
         }
     }
 
-    private static List<String> getFileList() {
+    private static List<String> getFileList() throws LogProcessorException {
 
         ArrayList<String> fileNames = new ArrayList<>();
         try {
@@ -152,7 +173,7 @@ public class LogProcessor {
                 }
             });
         } catch (IOException e) {
-            log.error("Error occurred while getting the file names from the directory path.", e);
+            throw new LogProcessorException("Error occurred while getting the file names from the directory path.", e);
         }
         return fileNames;
     }
