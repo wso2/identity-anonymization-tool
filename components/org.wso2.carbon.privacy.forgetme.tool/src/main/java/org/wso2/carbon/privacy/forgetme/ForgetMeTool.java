@@ -38,15 +38,14 @@ public class ForgetMeTool {
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
-        String homeDir = null;
+        String homeDir;
         if (cmd.hasOption("d")) {
             homeDir = cmd.getOptionValue("d");
-
         } else {
             printError(options);
             return;
         }
-        UserIdentifier userIdentifier = null;
+        UserIdentifier userIdentifier;
         if (cmd.hasOption("U")) {
             String userName = cmd.getOptionValue("U");
             String domainName = cmd.getOptionValue("D", "PRIMARY");
