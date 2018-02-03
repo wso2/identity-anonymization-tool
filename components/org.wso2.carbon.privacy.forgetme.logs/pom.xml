@@ -27,6 +27,15 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.privacy</groupId>
+            <artifactId>org.wso2.carbon.privacy.forgetme.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.10</version>
+        </dependency>
     </dependencies>
 
     <properties>
@@ -56,35 +65,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.wso2.carbon.LogProcessor</mainClass>
+                    <mainClass>org.wso2.carbon.privacy.forgetme.logs.LogProcessor</mainClass>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/target/conf</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <baseDirectory>src/main/resources</baseDirectory>
-                                    <includes>
-                                        <include>**/*.properties</include>
-                                        <include>**/*.jks</include>
-                                        <include>**/*.xml</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -98,7 +80,7 @@
                         </goals>
                         <configuration>
                             <outputDirectory>
-                                ${project.build.baseDirectory}/libs
+                                target/libs
                             </outputDirectory>
                         </configuration>
                     </execution>
@@ -115,7 +97,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
-                                org.wso2.carbon.LogProcessor
+                                org.wso2.carbon.privacy.forgetme.logs.LogProcessor
                             </mainClass>
                         </manifest>
                         <manifestEntries>
