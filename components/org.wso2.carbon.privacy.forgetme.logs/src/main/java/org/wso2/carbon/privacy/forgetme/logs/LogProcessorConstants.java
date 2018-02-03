@@ -1,4 +1,4 @@
-package org.wso2.carbon;
+package org.wso2.carbon.privacy.forgetme.logs;
 
 public class LogProcessorConstants {
 

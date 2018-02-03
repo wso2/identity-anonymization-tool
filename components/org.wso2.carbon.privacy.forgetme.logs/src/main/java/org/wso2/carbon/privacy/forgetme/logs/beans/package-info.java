@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "patterns.xsd", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
-package org.wso2.carbon.beans;
+package org.wso2.carbon.privacy.forgetme.logs.beans;

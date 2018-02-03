@@ -53,4 +53,9 @@
         <replacePattern>${username}</replacePattern>
     </pattern>
 
+    <pattern key="pattern6">
+        <detectPattern>(.)*${username}(.)*</detectPattern>
+        <replacePattern></replacePattern>
+    </pattern>
+
 </patterns>

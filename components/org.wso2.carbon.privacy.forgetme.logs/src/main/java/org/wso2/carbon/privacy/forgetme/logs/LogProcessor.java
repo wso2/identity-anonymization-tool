@@ -1,10 +1,12 @@
-package org.wso2.carbon;
+package org.wso2.carbon.privacy.forgetme.logs;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.beans.Patterns;
+import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
+import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
+import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -47,9 +49,26 @@ public class LogProcessor {
             log.info("User details: " + args[0] + " " + args[1] + " " + args[2]);
         }
 
-        Map<String, String> templatePatternData = getTemplatePatternData(args[0], args[1], args[2]);
-        // Generate random string for the username.
-        String randomUUID = UUID.randomUUID().toString();
+        UserIdentifier userIdentifier = new UserIdentifier();
+        userIdentifier.setUsername(args[0]);
+        userIdentifier.setTenantDomain(args[1]);
+        userIdentifier.setUserStoreDomain(args[2]);
+        userIdentifier.setPseudonym(UUID.randomUUID().toString());
+
+        process(userIdentifier);
+    }
+
+    /**
+     * Process the log files in the configured directory path to identify and replace the occurrences of the user
+     * identifier with a pseudonym.
+     *
+     * @param userIdentifier
+     * @throws LogProcessorException
+     */
+    private static void process(UserIdentifier userIdentifier) throws LogProcessorException {
+
+        Map<String, String> templatePatternData = getTemplatePatternData(userIdentifier);
+        LogProcessorReport logProcessorReport = new LogProcessorReport(DIRECTORY_PATH, "PDF");
 
         // Reading the list of patterns to be searched in logs from external configuration file.
         Patterns patterns = readXML("conf/patterns.xml");
@@ -77,16 +96,24 @@ public class LogProcessor {
                         String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(),
                                 templatePatternData).trim();
                         Pattern regexp = Pattern.compile(formattedDetectPattern);
-                        Matcher matcher = regexp.matcher(line);
+                        Matcher matcher = regexp.matcher(replacement);
 
                         if (matcher.find()) {
                             // Pattern match hit.
                             patternMatched = true;
-                            log.info("Found [" + matcher.group() + "] starting at "
-                                    + matcher.start() + " and ending at " + (matcher.end() - 1));
                             String formattedReplacePattern = StrSubstitutor.replace(pattern.getReplacePattern(),
                                     templatePatternData);
-                            replacement = replacement.replaceAll(formattedReplacePattern, randomUUID);
+
+                            /* Here, if the replacePattern is not empty replace the username occurrences in the
+                            line. If it is empty, it indicates that a possible match is found in the current line. */
+                            if (StringUtils.isNotBlank(formattedReplacePattern)) {
+                                replacement =
+                                        replacement.replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
+                                logProcessorReport.addToReport(fileName, lineReader.getLineNumber(), true);
+
+                            } else {
+                                logProcessorReport.addToReport(fileName, lineReader.getLineNumber(), false);
+                            }
                         }
                     }
                     if (patternMatched) {
@@ -102,26 +129,43 @@ public class LogProcessor {
 
             // Replace original file with the temporary file.
             replaceFile(path);
+            logProcessorReport.printReport();
         }
     }
 
-
-    private static Patterns readXML(String path) throws JAXBException {
+    /**
+     * Read xml file for regex pattern configurations.
+     *
+     * @param path Path to config file.
+     * @return Patterns object.
+     * @throws LogProcessorException
+     */
+    private static Patterns readXML(String path) throws LogProcessorException {
 
         log.info("Reading pattern configuration file...");
-        JAXBContext jc = JAXBContext.newInstance(Patterns.class);
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(Patterns.class);
 
-        File xml = new File(path);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        Patterns patterns = (Patterns) unmarshaller.unmarshal(xml);
+            File xml = new File(path);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            Patterns patterns = (Patterns) unmarshaller.unmarshal(xml);
 
-        Marshaller marshaller = jc.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        log.info("Read successful.");
-        return patterns;
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            log.info("Read successful.");
+            return patterns;
+        } catch (JAXBException ex) {
+            throw new LogProcessorException("Error occurred while unmarshalling xml content.", ex);
+        }
     }
 
-    private static void replaceFile(Path filePath) {
+    /**
+     * Replace original log file with the generated temp file.
+     *
+     * @param filePath Log file path.
+     * @throws LogProcessorException
+     */
+    private static void replaceFile(Path filePath) throws LogProcessorException {
 
         String fileName = filePath.getFileName().toString();
         if (Files.exists(filePath)) {
@@ -135,12 +179,18 @@ public class LogProcessor {
                 log.info("Renamed the temp file '" + fileName + ".temp' to '" + fileName + "'");
 
             } catch (IOException ex) {
-                log.error("Error occurred while delete/rename file operation.", ex);
+                throw new LogProcessorException("Error occurred while delete/rename file operation.", ex);
             }
         }
     }
 
-    private static List<String> getFileList() {
+    /**
+     * Get list of filenames in the configured directory path.
+     *
+     * @return
+     * @throws LogProcessorException
+     */
+    private static List<String> getFileList() throws LogProcessorException {
 
         ArrayList<String> fileNames = new ArrayList<>();
         try {
@@ -151,23 +201,31 @@ public class LogProcessor {
                 }
             });
         } catch (IOException e) {
-            log.error("Error occurred while getting the file names from the directory path.", e);
+            throw new LogProcessorException("Error occurred while getting the file names from the directory path.", e);
         }
         return fileNames;
     }
 
-    private static Map<String, String> getTemplatePatternData(String username, String tenantDomain,
-                                                              String userstoreDomain) {
+    /**
+     * Get actual data for configured templates in the regexes. E.g. ${username} in regex will be replaced with the
+     * actual username.
+     *
+     * @param userIdentifier
+     * @return Map of templates and their corresponding values.
+     */
+    private static Map<String, String> getTemplatePatternData(UserIdentifier userIdentifier) {
 
         HashMap<String, String> patternData = new HashMap<>();
-        patternData.put(LogProcessorConstants.USERNAME, username);
-        patternData.put(LogProcessorConstants.TENANT_DOMAIN, tenantDomain);
+        patternData.put(LogProcessorConstants.USERNAME, userIdentifier.getUsername());
+        patternData.put(LogProcessorConstants.TENANT_DOMAIN, userIdentifier.getTenantDomain());
         //TODO: need a way to obtain tenant ID from provided tenant domain.
         patternData.put(LogProcessorConstants.TENANT_ID, String.valueOf(-1234));
-        if (StringUtils.equalsIgnoreCase(LogProcessorConstants.PRIMARY_USERSTORE_DOMAIN, userstoreDomain)) {
+        if (StringUtils.equalsIgnoreCase(LogProcessorConstants.PRIMARY_USERSTORE_DOMAIN,
+                userIdentifier.getUserStoreDomain())) {
             patternData.put(LogProcessorConstants.USERSTORE_DOMAIN, "");
         } else {
-            patternData.put(LogProcessorConstants.USERSTORE_DOMAIN, StringUtils.capitalize(userstoreDomain));
+            patternData.put(LogProcessorConstants.USERSTORE_DOMAIN,
+                    StringUtils.capitalize(userIdentifier.getUserStoreDomain()));
         }
         return patternData;
     }
