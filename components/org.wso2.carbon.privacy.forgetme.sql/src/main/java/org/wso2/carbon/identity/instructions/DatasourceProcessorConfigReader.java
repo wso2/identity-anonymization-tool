@@ -1,6 +1,7 @@
 package org.wso2.carbon.identity.instructions;
 
-import org.wso2.carbon.identity.config.DataSourceConfig;
+import org.wso2.carbon.datasource.core.DataSourceManager;
+import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.identity.exception.SQLModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 
@@ -17,15 +18,18 @@ public class DatasourceProcessorConfigReader implements ProcessorConfigReader<Da
     }
 
     @Override
-    public DatasourceProcessorConfig readProcessorConfig(Path path) {
+    public DatasourceProcessorConfig readProcessorConfig(Path path) throws SQLModuleException {
 
-        DatasourceProcessorConfig datasourceProcessorConfig = new DatasourceProcessorConfig();
+        DataSourceManager dataSourceManager = DataSourceManager.getInstance();
+
         try {
-            DataSourceConfig dataSourceConfig = new DataSourceConfig(path, "WSO2_CARBON_DB");
-            datasourceProcessorConfig.addConfig(dataSourceConfig.getDataSourceName(), dataSourceConfig);
-        } catch (SQLModuleException e) {
-            e.printStackTrace();
+            dataSourceManager.initDataSources(path.toAbsolutePath().toString());
+        } catch (DataSourceException e) {
+            throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
+
+        DatasourceProcessorConfig datasourceProcessorConfig = new DatasourceProcessorConfig(dataSourceManager);
+
         return datasourceProcessorConfig;
     }
 }

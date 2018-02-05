@@ -23,33 +23,45 @@ import java.util.UUID;
  */
 public class ForgetMeTool {
 
+    private static final String CMD_OPTION_CONFIG_DIR = "d";
+    private static final String CMD_OPTION_CONFIG_CARBON_HOME = "carbon";
+    private static final String CMD_OPTION_CONFIG_USER_NAME = "U";
+    private static final String CMD_OPTION_CONFIG_USER_DOMAIN = "D";
+    private static final String CMD_OPTION_CONFIG_TENANT_DOMAIN = "T";
+
+    private static final String DEFAULT_TENANT_DOMAIN = "-1234";
+    private static final String DEFAULT_USER_DOMAIN = "PRIMARY";
+
+    private static final String COMMAND_NAME = "forget-me";
+    private static final String CONFIG_FILE_NAME = "config.json";
+
     private ForgetMeExecutionEngine forgetMeExecutionEngine;
 
     public static void main(String[] args) throws Exception {
 
         Options options = new Options();
 
-        options.addOption("d", true, "Directory to scan");
-        options.addOption("ch", true, "Carbon Home");
-        options.addOption("U", true, "User Name");
-        options.addOption("D", true, "User Domain");
-        options.addOption("T", true, "Tenant Domain");
+        options.addOption(CMD_OPTION_CONFIG_DIR, true, "Directory to scan");
+        options.addOption(CMD_OPTION_CONFIG_CARBON_HOME, true, "Carbon Home");
+        options.addOption(CMD_OPTION_CONFIG_USER_NAME, true, "User Name");
+        options.addOption(CMD_OPTION_CONFIG_USER_DOMAIN, true, "User Domain");
+        options.addOption(CMD_OPTION_CONFIG_TENANT_DOMAIN, true, "Tenant Domain");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
 
         String homeDir;
-        if (cmd.hasOption("d")) {
-            homeDir = cmd.getOptionValue("d");
+        if (cmd.hasOption(CMD_OPTION_CONFIG_DIR)) {
+            homeDir = cmd.getOptionValue(CMD_OPTION_CONFIG_DIR);
         } else {
             printError(options);
             return;
         }
         UserIdentifier userIdentifier;
-        if (cmd.hasOption("U")) {
-            String userName = cmd.getOptionValue("U");
-            String domainName = cmd.getOptionValue("D", "PRIMARY");
-            String tenantName = cmd.getOptionValue("T", "-1234");
+        if (cmd.hasOption(CMD_OPTION_CONFIG_USER_NAME)) {
+            String userName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_NAME);
+            String domainName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_DOMAIN, DEFAULT_USER_DOMAIN);
+            String tenantName = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_DOMAIN, DEFAULT_TENANT_DOMAIN);
             userIdentifier = createUserIdentifier(userName, domainName, tenantName);
         } else {
             printError(options);
@@ -62,7 +74,7 @@ public class ForgetMeTool {
     private static void printError(Options options) {
 
         HelpFormatter formatter = new HelpFormatter();
-        formatter.printHelp("forget-me", options);
+        formatter.printHelp(COMMAND_NAME, options);
     }
 
     public ForgetMeResult process(String homeDir, UserIdentifier userIdentifier) throws ForgetMeExecutionException {
@@ -72,7 +84,7 @@ public class ForgetMeTool {
         Environment environment = new SystemEnv();
         try {
             File home = new File(homeDir).getAbsoluteFile().getCanonicalFile();
-            SystemConfig systemConfig = configReader.readSystemConfig(new File(home, "config.json"));
+            SystemConfig systemConfig = configReader.readSystemConfig(new File(home, CONFIG_FILE_NAME));
             forgetMeExecutionEngine = new ForgetMeExecutionEngine(userIdentifier, environment, systemConfig);
             forgetMeResult = forgetMeExecutionEngine.execute();
         } catch (IOException e) {

@@ -18,15 +18,11 @@
 
 package org.wso2.carbon.identity.module;
 
-import org.wso2.carbon.datasource.core.DataSourceManager;
-import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.datasource.core.exception.DataSourceException;
-import org.wso2.carbon.datasource.core.impl.DataSourceServiceImpl;
 import org.wso2.carbon.identity.config.DataSourceConfig;
-import org.wso2.carbon.identity.exception.ModuleException;
 import org.wso2.carbon.identity.exception.SQLModuleException;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
 import org.wso2.carbon.identity.util.NamedPreparedStatement;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -46,13 +42,9 @@ public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
 
     public DomainSeparatedSQLExecutionModule(DataSourceConfig dataSourceConfig) throws SQLModuleException {
 
-        DataSourceManager dataSourceManager = DataSourceManager.getInstance();
-        DataSourceService dataSourceService = new DataSourceServiceImpl();
-
         try {
-            dataSourceManager.initDataSources(dataSourceConfig.getDataSourceConfigPath().toFile().getAbsolutePath());
-            dataSource = (DataSource) dataSourceService.getDataSource(dataSourceConfig.getDataSourceName());
-        } catch (DataSourceException e) {
+            dataSource = dataSourceConfig.getDatasource();
+        } catch (SQLModuleException e) {
             throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
     }
@@ -62,16 +54,16 @@ public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
 
         try (Connection connection = dataSource.getConnection()) {
 
-            NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(connection, userSQLQuery
-                    .getSqlQuery().toString());
+            NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(connection,
+                    userSQLQuery.getSqlQuery().toString());
 
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(USERNAME); i++) {
                 namedPreparedStatement.setString(USERNAME, userSQLQuery.getUserIdentifier().getUsername());
             }
 
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(USER_STORE_DOMAIN); i++) {
-                namedPreparedStatement.setString(USER_STORE_DOMAIN, userSQLQuery.getUserIdentifier()
-                        .getUserStoreDomain());
+                namedPreparedStatement
+                        .setString(USER_STORE_DOMAIN, userSQLQuery.getUserIdentifier().getUserStoreDomain());
             }
 
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(TENANT_DOMAIN); i++) {

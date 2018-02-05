@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.identity.exception;
 
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
+
 /**
  * Represents an generic exception occurred in the SQL module.
  */

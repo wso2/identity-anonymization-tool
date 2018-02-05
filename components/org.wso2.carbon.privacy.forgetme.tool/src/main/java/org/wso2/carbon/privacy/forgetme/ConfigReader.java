@@ -6,14 +6,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
+import org.wso2.carbon.privacy.forgetme.config.ConfigConstants;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
-import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,6 +21,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -57,7 +57,13 @@ public class ConfigReader {
         this.processorConfigReaderServiceLoader.forEach(r -> stringProcessorConfigReaderMap.put(r.getName(), r));
     }
 
-
+    /**
+     * Reads the system configuration from the file given.
+     *
+     * @param file
+     * @return
+     * @throws ForgetMeExecutionException
+     */
     public SystemConfig readSystemConfig(File file) throws ForgetMeExecutionException {
 
         SystemConfig systemConfig = new SystemConfig();
@@ -69,25 +75,27 @@ public class ConfigReader {
             if (parsedObject instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) parsedObject;
 
-                Object processors = jsonObject.get("processors");
+                Object processors = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_PROCESSORS);
                 if (processors instanceof JSONArray) {
                     loadProcessors((JSONArray) processors, systemConfig);
                 }
 
-                Object extensions = jsonObject.get("extensions");
+                Object extensions = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_EXTENSIONS);
                 if (extensions instanceof JSONArray) {
                     loadExtensions((JSONArray) extensions, systemConfig, basePath);
                 }
 
-                Object directories = jsonObject.get("directories");
+                Object directories = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_DIRECTORIES);
                 if (directories instanceof JSONArray) {
                     loadDirectories((JSONArray) directories, systemConfig, basePath);
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new ForgetMeExecutionException(
+                    "Could not read the config files related to : " + file.getAbsolutePath(), e);
         } catch (ParseException e) {
-            e.printStackTrace();
+            throw new ForgetMeExecutionException("Could not parse config files related to: " + file.getAbsolutePath(),
+                    e);
         }
         return systemConfig;
     }
@@ -98,9 +106,9 @@ public class ConfigReader {
         for (Object e : directories) {
             if (e instanceof JSONObject) {
                 JSONObject dirConfig = (JSONObject) e;
-                Object type = dirConfig.get("type");
-                Object dir = dirConfig.get("dir");
-                Object processor = dirConfig.get("processor");
+                Object type = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
+                Object dir = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_DIR);
+                Object processor = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
                 if (type instanceof String && dir instanceof String && processor instanceof String) {
                     String processorName = (String) processor;
                     if (systemConfig.getProcessors().contains(processorName)) {
@@ -127,6 +135,7 @@ public class ConfigReader {
     }
 
     private void loadProcessors(JSONArray processors, SystemConfig systemConfig) {
+
         processors.forEach(e -> {
             if (e instanceof String) {
                 systemConfig.addProcessor((String) e);
@@ -134,27 +143,39 @@ public class ConfigReader {
         });
     }
 
-    private void loadExtensions(JSONArray extensions, SystemConfig systemConfig, Path basePath) {
-        extensions.forEach(e -> {
+    private void loadExtensions(JSONArray extensions, SystemConfig systemConfig, Path basePath)
+            throws ForgetMeExecutionException {
+
+        for (Iterator iterator = extensions.iterator(); iterator.hasNext(); ) {
+            Object e = iterator.next();
             if (e instanceof JSONObject) {
                 JSONObject extension = (JSONObject) e;
-                Object processor = extension.get("processor");
-                Object type = extension.get("type");
-                Object dir = extension.get("dir");
+                Object processor = extension.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
+                Object type = extension.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
+                Object dir = extension.get(ConfigConstants.CONFIG_ELEMENT_DIR);
                 if (processor instanceof String && dir instanceof String && type instanceof String) {
                     ProcessorConfigReader processorConfigReader = stringProcessorConfigReaderMap.get(type);
                     if (processorConfigReader == null) {
-                        System.err.println("No processor configuration extension found for : " + dir);
+                        throw new ForgetMeExecutionException(
+                                "No processor configuration extension found for : " + processor + ", dir: " + dir);
                     } else {
                         Path path = basePath.resolve((String) dir);
-                        ProcessorConfig processorConfig = processorConfigReader.readProcessorConfig(path);
-                        systemConfig.addProcessorConfig((String) processor, processorConfig);
-                        if (log.isDebugEnabled()) {
-                            log.debug("Loaded processor config : {} from directory : {}", processorConfig, path);
+                        ProcessorConfig processorConfig = null;
+                        try {
+                            processorConfig = processorConfigReader.readProcessorConfig(path);
+                            systemConfig.addProcessorConfig((String) processor, processorConfig);
+                            if (log.isDebugEnabled()) {
+                                log.debug("Loaded processor config : {} from directory : {}", processorConfig, path);
+                            }
+                        } catch (ModuleException me) {
+                            throw new ForgetMeExecutionException(
+                                    "Error in reading config of the processor : " + processor + ", from the path : "
+                                            + path, me);
                         }
                     }
                 }
             }
-        });
+        }
+        ;
     }
 }

@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
+import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionExecutionException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
@@ -122,6 +123,13 @@ public class ForgetMeExecutionEngine {
         }
     }
 
+    /**
+     * Class implements instruction execution thread.
+     * Each processor has its own instruction pipeline.
+     * Pipelines can run in parallel.
+     * Instructions in each pipeline executes sequentially.
+     *
+     */
     private static class ProcessorPipeline implements Callable<ForgetMeResult> {
 
         private ProcessorConfig processorConfig;
@@ -130,14 +138,14 @@ public class ForgetMeExecutionEngine {
 
         public ProcessorPipeline(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
                 List<ForgetMeInstruction> instructionList) {
-            this.userIdentifier = userIdentifier;
 
+            this.userIdentifier = userIdentifier;
             this.processorConfig = processorConfig;
             this.instructionList = instructionList;
         }
 
         @Override
-        public ForgetMeResult call() {
+        public ForgetMeResult call() throws InstructionExecutionException {
 
             ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
             Environment environment = new SystemEnv();
