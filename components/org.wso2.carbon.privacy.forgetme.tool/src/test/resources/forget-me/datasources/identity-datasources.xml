@@ -19,8 +19,8 @@
 <datasources-configuration>
     <datasources>
         <datasource>
-            <name>WSO2_CARBON_DB</name>
-            <description>The datasource used for registry and user manager</description>
+            <name>identity</name>
+            <description>The datasource used for identity</description>
             <definition type="RDBMS">
                 <configuration>
                     <url>jdbc:h2:file:WSO2CARBON_DB</url>

@@ -18,57 +18,55 @@
 
 package org.wso2.carbon.identity.config;
 
-import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.datasource.core.DataSourceManager;
+import org.wso2.carbon.datasource.core.beans.CarbonDataSource;
 import org.wso2.carbon.identity.exception.SQLModuleException;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.sql.DataSource;
 
 /**
  * Represents a data source configuration.
  */
 public class DataSourceConfig {
 
-    private Path dataSourceConfigPath;
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
+
     private String dataSourceName;
+    private DataSourceManager dataSourceManager;
 
-    public DataSourceConfig(Path dataSourceConfigPath, String dataSourceName) throws SQLModuleException {
+    /**
+     * Constructs the config with given datasource name and the given datasource manager.
+     *
+     * @param dataSourceName
+     * @param dataSourceManager
+     */
+    public DataSourceConfig(String dataSourceName, DataSourceManager dataSourceManager) {
+        
+        this.dataSourceName = dataSourceName;
+        this.dataSourceManager = dataSourceManager;
+    }
 
-        if (dataSourceConfigPath == null || StringUtils.isEmpty(dataSourceName)) {
-            throw new SQLModuleException("All values are mandatory. Cannot be null or empty.");
+    /**
+     * Returns the datasource for the given configuration, given by current datasource name.
+     *
+     * @return
+     * @throws SQLModuleException
+     */
+    public DataSource getDatasource() throws SQLModuleException {
+        
+        if (dataSourceManager.getDataSourceRepository() != null) {
+            CarbonDataSource carbonDataSource = dataSourceManager.getDataSourceRepository()
+                    .getDataSource(dataSourceName);
+            if (carbonDataSource != null) {
+                return (DataSource) carbonDataSource.getDataSourceObject();
+            } else {
+                logger.error("Could not find a datasource for the name : " + dataSourceName);
+            }
+        } else {
+            throw new SQLModuleException("Datasource manager is not initialized.");
         }
-
-        this.dataSourceConfigPath = dataSourceConfigPath;
-        this.dataSourceName = dataSourceName;
-    }
-
-    public DataSourceConfig(String dataSourceConfigPath, String dataSourceName) throws SQLModuleException {
-
-        if (StringUtils.isEmpty(dataSourceConfigPath) || StringUtils.isEmpty(dataSourceName)) {
-            throw new SQLModuleException("All values are mandatory, Cannot be null or empty.");
-        }
-
-        this.dataSourceConfigPath = Paths.get(dataSourceConfigPath);
-        this.dataSourceName = dataSourceName;
-    }
-
-    public Path getDataSourceConfigPath() {
-        return dataSourceConfigPath;
-    }
-
-    public void setDataSourceConfigPath(Path dataSourceConfigPath) {
-        this.dataSourceConfigPath = dataSourceConfigPath;
-    }
-
-    public void setDataSourceConfigPath(String dataSourceConfigPath) {
-        this.dataSourceConfigPath = Paths.get(dataSourceConfigPath);
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(String dataSourceName) {
-        this.dataSourceName = dataSourceName;
+        return null;
     }
 }

@@ -24,7 +24,7 @@ import org.wso2.carbon.datasource.core.api.DataSourceService;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.datasource.core.impl.DataSourceServiceImpl;
 import org.wso2.carbon.identity.config.DataSourceConfig;
-import org.wso2.carbon.identity.exception.ModuleException;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.identity.exception.SQLModuleException;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
 import org.wso2.carbon.identity.util.NamedPreparedStatement;
@@ -48,13 +48,9 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
 
     public DomainAppendedSQLExecutionModule(DataSourceConfig dataSourceConfig) throws SQLModuleException {
 
-        DataSourceManager dataSourceManager = DataSourceManager.getInstance();
-        DataSourceService dataSourceService = new DataSourceServiceImpl();
-
         try {
-            dataSourceManager.initDataSources(dataSourceConfig.getDataSourceConfigPath().toFile().getAbsolutePath());
-            dataSource = (DataSource) dataSourceService.getDataSource(dataSourceConfig.getDataSourceName());
-        } catch (DataSourceException e) {
+            dataSource = dataSourceConfig.getDatasource();
+        } catch (SQLModuleException e) {
             throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
     }

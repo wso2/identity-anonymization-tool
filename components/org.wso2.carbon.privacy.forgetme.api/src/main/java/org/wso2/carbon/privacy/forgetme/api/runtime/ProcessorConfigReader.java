@@ -23,6 +23,6 @@ public interface ProcessorConfigReader<T extends ProcessorConfig> {
      * @param path
      * @return
      */
-    T readProcessorConfig(Path path);
+    T readProcessorConfig(Path path) throws ModuleException;
 
 }

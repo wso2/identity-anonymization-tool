@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.identity.exception;
+package org.wso2.carbon.privacy.forgetme.api.runtime;
 
 /**
  * Represents an generic exception occurred in an any module.

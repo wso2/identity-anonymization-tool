@@ -16,7 +16,7 @@
   ],
   "extensions": [
     {
-      "dir": "datasource",
+      "dir": "datasources",
       "type": "datasource",
       "processor" : "rdbms"
     }

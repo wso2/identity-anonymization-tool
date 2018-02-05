@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.identity.module;
 
-import org.wso2.carbon.identity.exception.ModuleException;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 
 /**
  * Abstract processor to execute tasks.

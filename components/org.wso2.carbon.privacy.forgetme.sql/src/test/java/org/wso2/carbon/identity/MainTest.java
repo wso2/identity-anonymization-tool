@@ -4,14 +4,16 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.wso2.carbon.identity.config.DataSourceConfig;
-import org.wso2.carbon.identity.exception.ModuleException;
 import org.wso2.carbon.identity.exception.SQLModuleException;
+import org.wso2.carbon.identity.instructions.DatasourceProcessorConfig;
+import org.wso2.carbon.identity.instructions.DatasourceProcessorConfigReader;
 import org.wso2.carbon.identity.module.DomainAppendedSQLExecutionModule;
 import org.wso2.carbon.identity.module.DomainSeparatedSQLExecutionModule;
 import org.wso2.carbon.identity.module.Module;
 import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 import java.nio.file.Paths;
@@ -56,9 +58,11 @@ public class MainTest extends TestCase {
         userIdentifier.setTenantDomain("carbon.super");
         userIdentifier.setPseudonym(UUID.randomUUID().toString());
 
-        DataSourceConfig dataSourceConfig = new DataSourceConfig(Paths.get("components",
-                "org.wso2.carbon.identity.forgetme.sql", "src", "main", "resources", "conf", "datasources"),
-                "WSO2_CARBON_DB");
+        DatasourceProcessorConfigReader reader = new DatasourceProcessorConfigReader();
+        DatasourceProcessorConfig processorConfig = reader.readProcessorConfig(
+                Paths.get("components", "org.wso2.carbon.identity.forgetme.sql", "src", "main", "resources", "conf",
+                        "datasources"));
+        DataSourceConfig dataSourceConfig = processorConfig.getDataSourceConfig("WSO2_CARBON_DB");
 
         try {
             sqlQueries = sqlFileReader.readAllQueries();
