@@ -7,8 +7,10 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionExecutionException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
+import org.wso2.carbon.privacy.forgetme.config.InstructionReaderConfig;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.processor.ForgetMeCompositeResult;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
@@ -73,7 +75,7 @@ public class ForgetMeExecutionEngine {
         }
     }
 
-    private void startExecutors() {
+    private void startExecutors() throws ForgetMeExecutionException {
 
         for (String processorName : executors.keySet()) {
             List<ForgetMeInstruction> instructions = getInstructions(processorName, systemEnv);
@@ -85,15 +87,23 @@ public class ForgetMeExecutionEngine {
         }
     }
 
-    private List<ForgetMeInstruction> getInstructions(String processorName, Environment environment) {
+    private List<ForgetMeInstruction> getInstructions(String processorName, Environment environment)
+            throws ForgetMeExecutionException {
 
         List<ForgetMeInstruction> result = new ArrayList<>();
-        for (Map.Entry<Path, InstructionReader> entry : systemConfig.getDirectoryToInstructionReaderMap().entrySet()) {
-            InstructionReader reader = entry.getValue();
+        for (Map.Entry<Path, InstructionReaderConfig> entry : systemConfig.getDirectoryToInstructionReaderMap()
+                .entrySet()) {
+            InstructionReaderConfig readerConfig = entry.getValue();
+            InstructionReader reader = readerConfig.getInstructionReader();
             Path path = entry.getKey();
             if (reader.getType().equals(processorName)) {
-                List<ForgetMeInstruction> instructions = reader.read(path, environment);
-                result.addAll(instructions);
+                List<ForgetMeInstruction> instructions = null;
+                try {
+                    instructions = reader.read(path, readerConfig.getProperties(), environment);
+                } catch (ModuleException e) {
+                    throw new ForgetMeExecutionException(
+                            "Unable to get instructions for the processor : " + processorName, e);
+                } result.addAll(instructions);
             }
         }
 

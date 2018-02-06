@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * Represents System Configuration.
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class SystemConfig {
 
-    private Map<Path, InstructionReader> directoryToInstructionReaderMap = new HashMap<>();
+    private Map<Path, InstructionReaderConfig> directoryToInstructionReaderMap = new HashMap<>();
     private Map<String, ProcessorConfig> processorConfigMap = new HashMap<>();
     private List<String> processors = new ArrayList<>();
 
@@ -26,11 +27,11 @@ public class SystemConfig {
      * @param dir
      * @param instructionReader
      */
-    public void addInstructionReader(Path dir, InstructionReader instructionReader) {
-        directoryToInstructionReaderMap.put(dir, instructionReader);
+    public void addInstructionReader(Path dir, InstructionReader instructionReader, Properties properties) {
+        directoryToInstructionReaderMap.put(dir, new InstructionReaderConfig(instructionReader, properties));
     }
 
-    public Map<Path, InstructionReader> getDirectoryToInstructionReaderMap() {
+    public Map<Path, InstructionReaderConfig> getDirectoryToInstructionReaderMap() {
         return Collections.unmodifiableMap(directoryToInstructionReaderMap);
     }
 

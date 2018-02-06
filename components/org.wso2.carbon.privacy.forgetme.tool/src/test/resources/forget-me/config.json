@@ -1,12 +1,14 @@
 {
   "processors" : [
-    "rdbms"
+    "log-file"
   ],
   "directories": [
     {
-      "dir": "log",
+      "dir": "log-config/carbon-log",
       "type": "log-file",
-      "processor" : "log-file"
+      "processor" : "log-file",
+      "log-file-path" : "/Users/ruwan/Dev/wso2/product-is/5.5.0/gdpr-compliance-tool/tmp/logs",
+      "log-file-name-regex" : "wso2carbon.log"
     },
     {
       "dir": "sql",

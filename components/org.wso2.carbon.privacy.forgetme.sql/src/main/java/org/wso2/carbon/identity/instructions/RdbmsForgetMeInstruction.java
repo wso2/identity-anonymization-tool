@@ -52,7 +52,6 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
     public RdbmsForgetMeInstruction(Path sqlDir) {
 
-        // TODO: Do we need the datasource name here ?
         this.sqlDir = sqlDir;
     }
 
@@ -60,13 +59,10 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
             Environment environment) throws InstructionExecutionException {
 
-        log.info("Executing RdbmsForgetMeInstruction");
-
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
 
-        List<SQLQuery> sqlQueries;
         try {
-            sqlQueries = sqlFileReader.readAllQueries();
+            List<SQLQuery> sqlQueries = sqlFileReader.readAllQueries();
 
             for (SQLQuery sqlQuery : sqlQueries) {
 

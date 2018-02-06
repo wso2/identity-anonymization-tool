@@ -1,17 +1,15 @@
-package org.wso2.carbon.privacy.forgetme.logs;
+package org.wso2.carbon.privacy.forgetme.logs.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
+import org.wso2.carbon.privacy.forgetme.logs.LogProcessorConstants;
+import org.wso2.carbon.privacy.forgetme.logs.LogProcessorReport;
 import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
 import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,20 +28,24 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
-public class LogProcessor {
+public class LogFileProcessor {
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
     private final static String DIRECTORY_PATH = "/home/sathya/Desktop/pseudonym/logs";
 
-    private static Logger log = LoggerFactory.getLogger(LogProcessor.class);
+    private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
 
     public static void main(String[] args) throws Exception {
 
         if (args.length != 3) {
             // Expected arguments are not provided.
-            log.info("Usage: java -jar GDPR-Compliance-LogProcessor-1.0-SNAPSHOT.jar <username> <tenant-domain>" +
-                    " <userstore-domain>");
+            log.info("Usage: java -jar GDPR-Compliance-LogProcessor-1.0-SNAPSHOT.jar <username> <tenant-domain>"
+                    + " <userstore-domain>");
             System.exit(0);
         } else {
             log.info("User details: " + args[0] + " " + args[1] + " " + args[2]);
@@ -55,7 +57,7 @@ public class LogProcessor {
         userIdentifier.setUserStoreDomain(args[2]);
         userIdentifier.setPseudonym(UUID.randomUUID().toString());
 
-        process(userIdentifier);
+        process(userIdentifier, null, null);
     }
 
     /**
@@ -65,26 +67,31 @@ public class LogProcessor {
      * @param userIdentifier
      * @throws LogProcessorException
      */
-    private static void process(UserIdentifier userIdentifier) throws LogProcessorException {
+    private static void process(UserIdentifier userIdentifier, String logDir, String fileNameRegex)
+            throws LogProcessorException {
 
-        Map<String, String> templatePatternData = getTemplatePatternData(userIdentifier);
+
         LogProcessorReport logProcessorReport = new LogProcessorReport(DIRECTORY_PATH, "PDF");
 
         // Reading the list of patterns to be searched in logs from external configuration file.
-        Patterns patterns = readXML("conf/patterns.xml");
+        Patterns patterns = readXML(new File("conf/patterns.xml"));
         List<Patterns.Pattern> patternList = patterns.getPattern();
 
         // Iterating through the list of files inside the repository/logs directory.
-        List<String> fileList = getFileList();
-        for (String fileName : fileList) {
-            Path path = Paths.get(DIRECTORY_PATH + File.separator + fileName);
+        List<File> fileList = getFileList(DIRECTORY_PATH);
+        processFiles(userIdentifier, logProcessorReport, patternList, fileList);
+    }
 
-            try (
-                    BufferedReader reader = Files.newBufferedReader(path, ENCODING);
+    public static void processFiles(UserIdentifier userIdentifier,
+            LogProcessorReport logProcessorReport, List<Patterns.Pattern> patternList, List<File> fileList)
+            throws LogProcessorException {
+
+        Map<String, String> templatePatternData = getTemplatePatternData(userIdentifier);
+        for (File file : fileList) {
+            try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
                     BufferedWriter writer = new BufferedWriter(
-                            new FileWriter(DIRECTORY_PATH + File.separator + fileName + ".temp"))
-            ) {
+                            new FileWriter(file.toPath().toString() + ".temp"))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
 
@@ -93,26 +100,26 @@ public class LogProcessor {
 
                     // Check the line for any detectPattern matches.
                     for (Patterns.Pattern pattern : patternList) {
-                        String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(),
-                                templatePatternData).trim();
+                        String formattedDetectPattern = StrSubstitutor
+                                .replace(pattern.getDetectPattern(), templatePatternData).trim();
                         Pattern regexp = Pattern.compile(formattedDetectPattern);
                         Matcher matcher = regexp.matcher(replacement);
 
                         if (matcher.find()) {
                             // Pattern match hit.
                             patternMatched = true;
-                            String formattedReplacePattern = StrSubstitutor.replace(pattern.getReplacePattern(),
-                                    templatePatternData);
+                            String formattedReplacePattern = StrSubstitutor
+                                    .replace(pattern.getReplacePattern(), templatePatternData);
 
                             /* Here, if the replacePattern is not empty replace the username occurrences in the
                             line. If it is empty, it indicates that a possible match is found in the current line. */
                             if (StringUtils.isNotBlank(formattedReplacePattern)) {
-                                replacement =
-                                        replacement.replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
-                                logProcessorReport.addToReport(fileName, lineReader.getLineNumber(), true);
+                                replacement = replacement
+                                        .replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
+                                logProcessorReport.addToReport(file.getName(), lineReader.getLineNumber(), true);
 
                             } else {
-                                logProcessorReport.addToReport(fileName, lineReader.getLineNumber(), false);
+                                logProcessorReport.addToReport(file.getName(), lineReader.getLineNumber(), false);
                             }
                         }
                     }
@@ -127,8 +134,7 @@ public class LogProcessor {
                 log.error("Error occurred while file read/write operation.", ex);
             }
 
-            // Replace original file with the temporary file.
-            replaceFile(path);
+
             logProcessorReport.printReport();
         }
     }
@@ -136,19 +142,18 @@ public class LogProcessor {
     /**
      * Read xml file for regex pattern configurations.
      *
-     * @param path Path to config file.
+     * @param xmlFile The config file.
      * @return Patterns object.
      * @throws LogProcessorException
      */
-    private static Patterns readXML(String path) throws LogProcessorException {
+    public static Patterns readXML(File xmlFile) throws LogProcessorException {
 
         log.info("Reading pattern configuration file...");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Patterns.class);
 
-            File xml = new File(path);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            Patterns patterns = (Patterns) unmarshaller.unmarshal(xml);
+            Patterns patterns = (Patterns) unmarshaller.unmarshal(xmlFile);
 
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -190,14 +195,13 @@ public class LogProcessor {
      * @return
      * @throws LogProcessorException
      */
-    private static List<String> getFileList() throws LogProcessorException {
+    public static List<File> getFileList(String path) throws LogProcessorException {
 
-        ArrayList<String> fileNames = new ArrayList<>();
+        ArrayList<File> fileNames = new ArrayList<>();
         try {
-            Files.walk(Paths.get(DIRECTORY_PATH)).forEach(filePath -> {
+            Files.walk(Paths.get(path)).forEach(filePath -> {
                 if (Files.isRegularFile(filePath)) {
-                    String fileName = filePath.getFileName().toString();
-                    fileNames.add(fileName);
+                    fileNames.add(filePath.toFile());
                 }
             });
         } catch (IOException e) {

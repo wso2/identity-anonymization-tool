@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
@@ -13,6 +14,7 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 import org.wso2.carbon.privacy.forgetme.config.ConfigConstants;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
+import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.FileReader;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.ServiceLoader;
 
 /**
@@ -109,6 +112,7 @@ public class ConfigReader {
                 Object type = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
                 Object dir = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_DIR);
                 Object processor = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
+                Properties additionalProperties = getAdditionalProperties(dirConfig, new SystemEnv());
                 if (type instanceof String && dir instanceof String && processor instanceof String) {
                     String processorName = (String) processor;
                     if (systemConfig.getProcessors().contains(processorName)) {
@@ -118,7 +122,7 @@ public class ConfigReader {
                             path = basePath.resolve((String) dir);
                         }
                         if (instructionReader != null) {
-                            systemConfig.addInstructionReader(path, instructionReader);
+                            systemConfig.addInstructionReader(path, instructionReader, additionalProperties);
                         } else {
                             throw new ForgetMeExecutionException(
                                     "Could not find an instruction reader for the processor : " + processor);
@@ -129,9 +133,17 @@ public class ConfigReader {
                         }
                     }
                 }
-
             }
         }
+    }
+
+    private Properties getAdditionalProperties(JSONObject dirConfig, Environment environment) {
+
+        Properties properties = new Properties();
+        dirConfig.forEach((key, value) -> {
+            properties.setProperty(key.toString(), value.toString()); //TODO: Parse environment
+        });
+        return properties;
     }
 
     private void loadProcessors(JSONArray processors, SystemConfig systemConfig) {

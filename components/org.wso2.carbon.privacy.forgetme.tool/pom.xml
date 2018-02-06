@@ -54,6 +54,11 @@
             <artifactId>org.wso2.carbon.privacy.forgetme.sql</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.privacy</groupId>
+            <artifactId>org.wso2.carbon.privacy.forgetme.logs</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
