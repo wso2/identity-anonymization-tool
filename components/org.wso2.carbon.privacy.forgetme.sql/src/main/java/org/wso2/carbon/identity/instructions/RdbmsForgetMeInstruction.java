@@ -28,6 +28,7 @@ import org.wso2.carbon.identity.module.Module;
 import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
@@ -52,21 +53,17 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
     public RdbmsForgetMeInstruction(Path sqlDir) {
 
-        // TODO: Do we need the datasource name here ?
         this.sqlDir = sqlDir;
     }
 
     @Override
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-            Environment environment) throws InstructionExecutionException {
-
-        log.info("Executing RdbmsForgetMeInstruction");
+            Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
 
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
 
-        List<SQLQuery> sqlQueries;
         try {
-            sqlQueries = sqlFileReader.readAllQueries();
+            List<SQLQuery> sqlQueries = sqlFileReader.readAllQueries();
 
             for (SQLQuery sqlQuery : sqlQueries) {
 

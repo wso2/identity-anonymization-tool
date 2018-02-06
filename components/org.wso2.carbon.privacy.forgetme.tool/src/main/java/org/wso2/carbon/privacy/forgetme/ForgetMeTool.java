@@ -5,6 +5,9 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
@@ -23,11 +26,14 @@ import java.util.UUID;
  */
 public class ForgetMeTool {
 
+    private static final Logger logger = LoggerFactory.getLogger(ForgetMeTool.class);
+
     private static final String CMD_OPTION_CONFIG_DIR = "d";
     private static final String CMD_OPTION_CONFIG_CARBON_HOME = "carbon";
     private static final String CMD_OPTION_CONFIG_USER_NAME = "U";
     private static final String CMD_OPTION_CONFIG_USER_DOMAIN = "D";
     private static final String CMD_OPTION_CONFIG_TENANT_DOMAIN = "T";
+    private static final String CMD_OPTION_CONFIG_USER_PSEUDONYM = "pu";
 
     private static final String DEFAULT_TENANT_DOMAIN = "-1234";
     private static final String DEFAULT_USER_DOMAIN = "PRIMARY";
@@ -46,6 +52,7 @@ public class ForgetMeTool {
         options.addOption(CMD_OPTION_CONFIG_USER_NAME, true, "User Name");
         options.addOption(CMD_OPTION_CONFIG_USER_DOMAIN, true, "User Domain");
         options.addOption(CMD_OPTION_CONFIG_TENANT_DOMAIN, true, "Tenant Domain");
+        options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true, "Pseudonym");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -62,13 +69,24 @@ public class ForgetMeTool {
             String userName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_NAME);
             String domainName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_DOMAIN, DEFAULT_USER_DOMAIN);
             String tenantName = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_DOMAIN, DEFAULT_TENANT_DOMAIN);
+            String pseudonym = createPseudonym(cmd.getOptionValue(CMD_OPTION_CONFIG_USER_PSEUDONYM));
             userIdentifier = createUserIdentifier(userName, domainName, tenantName);
+            userIdentifier.setPseudonym(pseudonym);
         } else {
             printError(options);
             return;
         }
         ForgetMeTool forgetMeTool = new ForgetMeTool();
         forgetMeTool.process(homeDir, userIdentifier);
+    }
+
+    private static String createPseudonym(String optionValue) {
+        String result = optionValue;
+        if (StringUtils.isEmpty(optionValue)) {
+            result = UUID.randomUUID().toString();
+            logger.info("Generating pseudonym as pseudo name is not provided : " + result);
+        }
+        return result;
     }
 
     private static void printError(Options options) {
@@ -85,6 +103,7 @@ public class ForgetMeTool {
         try {
             File home = new File(homeDir).getAbsoluteFile().getCanonicalFile();
             SystemConfig systemConfig = configReader.readSystemConfig(new File(home, CONFIG_FILE_NAME));
+            systemConfig.setWorkDir(home.toPath());
             forgetMeExecutionEngine = new ForgetMeExecutionEngine(userIdentifier, environment, systemConfig);
             forgetMeResult = forgetMeExecutionEngine.execute();
         } catch (IOException e) {

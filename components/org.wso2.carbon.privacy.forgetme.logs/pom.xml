@@ -65,7 +65,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>org.wso2.carbon.privacy.forgetme.logs.LogProcessor</mainClass>
+                    <mainClass>org.wso2.carbon.privacy.forgetme.logs.processor.LogFileProcessor</mainClass>
                 </configuration>
             </plugin>
             <plugin>
@@ -97,7 +97,7 @@
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                             <mainClass>
-                                org.wso2.carbon.privacy.forgetme.logs.LogProcessor
+                                org.wso2.carbon.privacy.forgetme.logs.processor.LogFileProcessor
                             </mainClass>
                         </manifest>
                         <manifestEntries>

@@ -10,6 +10,7 @@ import java.io.FileFilter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 public class JdbcForgetMeInstructionReader implements InstructionReader {
 
@@ -19,8 +20,8 @@ public class JdbcForgetMeInstructionReader implements InstructionReader {
     }
 
     @Override
-    public List<ForgetMeInstruction> read(Path path, Environment environment) {
-        System.out.println("Reading JdbcForgetMeInstructionReader");
+    public List<ForgetMeInstruction> read(Path path, Properties properties, Environment environment) {
+
         List<ForgetMeInstruction> result = new ArrayList<>();
 
         File contendDirectory = path.toFile();

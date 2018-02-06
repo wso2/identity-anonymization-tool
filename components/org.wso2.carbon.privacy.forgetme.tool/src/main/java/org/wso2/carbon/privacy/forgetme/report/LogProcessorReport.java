@@ -1,4 +1,4 @@
-package org.wso2.carbon.privacy.forgetme.logs;
+package org.wso2.carbon.privacy.forgetme.report;
 
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
