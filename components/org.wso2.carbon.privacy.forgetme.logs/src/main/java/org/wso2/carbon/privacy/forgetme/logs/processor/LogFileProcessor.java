@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.logs.LogProcessorConstants;
-import org.wso2.carbon.privacy.forgetme.logs.LogProcessorReport;
 import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
 import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.bind.JAXBContext;
@@ -36,62 +35,20 @@ import javax.xml.bind.Unmarshaller;
 public class LogFileProcessor {
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
-    private final static String DIRECTORY_PATH = "/home/sathya/Desktop/pseudonym/logs";
 
     private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
 
-    public static void main(String[] args) throws Exception {
 
-        if (args.length != 3) {
-            // Expected arguments are not provided.
-            log.info("Usage: java -jar GDPR-Compliance-LogProcessor-1.0-SNAPSHOT.jar <username> <tenant-domain>"
-                    + " <userstore-domain>");
-            System.exit(0);
-        } else {
-            log.info("User details: " + args[0] + " " + args[1] + " " + args[2]);
-        }
+    public static void processFiles(UserIdentifier userIdentifier, ReportAppender reportAppender,
+            List<Patterns.Pattern> patternList, List<File> fileList) throws LogProcessorException {
 
-        UserIdentifier userIdentifier = new UserIdentifier();
-        userIdentifier.setUsername(args[0]);
-        userIdentifier.setTenantDomain(args[1]);
-        userIdentifier.setUserStoreDomain(args[2]);
-        userIdentifier.setPseudonym(UUID.randomUUID().toString());
-
-        process(userIdentifier, null, null);
-    }
-
-    /**
-     * Process the log files in the configured directory path to identify and replace the occurrences of the user
-     * identifier with a pseudonym.
-     *
-     * @param userIdentifier
-     * @throws LogProcessorException
-     */
-    private static void process(UserIdentifier userIdentifier, String logDir, String fileNameRegex)
-            throws LogProcessorException {
-
-
-        LogProcessorReport logProcessorReport = new LogProcessorReport(DIRECTORY_PATH, "PDF");
-
-        // Reading the list of patterns to be searched in logs from external configuration file.
-        Patterns patterns = readXML(new File("conf/patterns.xml"));
-        List<Patterns.Pattern> patternList = patterns.getPattern();
-
-        // Iterating through the list of files inside the repository/logs directory.
-        List<File> fileList = getFileList(DIRECTORY_PATH);
-        processFiles(userIdentifier, logProcessorReport, patternList, fileList);
-    }
-
-    public static void processFiles(UserIdentifier userIdentifier,
-            LogProcessorReport logProcessorReport, List<Patterns.Pattern> patternList, List<File> fileList)
-            throws LogProcessorException {
 
         Map<String, String> templatePatternData = getTemplatePatternData(userIdentifier);
         for (File file : fileList) {
+            reportAppender.appendSection("File %s", file.getAbsolutePath());
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
-                    BufferedWriter writer = new BufferedWriter(
-                            new FileWriter(file.toPath().toString() + ".temp"))) {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(file.toPath().toString() + ".temp"))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
 
@@ -116,10 +73,10 @@ public class LogFileProcessor {
                             if (StringUtils.isNotBlank(formattedReplacePattern)) {
                                 replacement = replacement
                                         .replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
-                                logProcessorReport.addToReport(file.getName(), lineReader.getLineNumber(), true);
+                                reportAppender.append("Replaced, %d, %b", lineReader.getLineNumber(), true);
 
                             } else {
-                                logProcessorReport.addToReport(file.getName(), lineReader.getLineNumber(), false);
+                                reportAppender.append("Not Replaced, %d, %b", lineReader.getLineNumber(), true);
                             }
                         }
                     }
@@ -134,8 +91,6 @@ public class LogFileProcessor {
                 log.error("Error occurred while file read/write operation.", ex);
             }
 
-
-            logProcessorReport.printReport();
         }
     }
 

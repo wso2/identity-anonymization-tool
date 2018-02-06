@@ -53,6 +53,13 @@ public class ForgetMeExecutionEngine {
         this.systemEnv = systemEnv;
     }
 
+    /**
+     * Executes the engine.
+     * This will start multiple processors in parallel threads.
+     *
+     * @return
+     * @throws ForgetMeExecutionException
+     */
     public ForgetMeResult execute() throws ForgetMeExecutionException {
 
         ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
@@ -63,7 +70,17 @@ public class ForgetMeExecutionEngine {
         return forgetMeResult;
     }
 
+    /**
+     * Waits for the completion of all the processors.
+     *
+     * @param compositeResult
+     */
     private void waitForCompletion(ForgetMeCompositeResult compositeResult) {
+
+        for (ExecutorService executorService : executors.values()) {
+            //Causes shutdown when the current job finishes.
+            executorService.shutdown();
+        }
 
         for (Future<ForgetMeResult> future : submittedJobs) {
             try {
@@ -73,6 +90,7 @@ public class ForgetMeExecutionEngine {
                 log.error("Interrupted while executing the processor thread : " + future, e);
             }
         }
+        log.info("All processors has been properly shut-down");
     }
 
     private void startExecutors() throws ForgetMeExecutionException {
@@ -103,7 +121,8 @@ public class ForgetMeExecutionEngine {
                 } catch (ModuleException e) {
                     throw new ForgetMeExecutionException(
                             "Unable to get instructions for the processor : " + processorName, e);
-                } result.addAll(instructions);
+                }
+                result.addAll(instructions);
             }
         }
 
