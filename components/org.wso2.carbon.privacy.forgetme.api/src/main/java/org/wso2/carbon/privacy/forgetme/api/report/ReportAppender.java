@@ -21,4 +21,11 @@ public interface ReportAppender {
      * @param data
      */
     void append(String format, Object ... data);
+
+    /**
+     * Appends a section end to the report section.
+     * @param format
+     * @param data
+     */
+    void appendSectionEnd(String format, Object ... data);
 }

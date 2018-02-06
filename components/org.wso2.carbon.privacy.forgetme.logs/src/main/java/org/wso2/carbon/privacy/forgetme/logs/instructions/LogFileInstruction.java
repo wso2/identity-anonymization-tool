@@ -28,32 +28,19 @@ public class LogFileInstruction implements ForgetMeInstruction {
     private File logFile;
 
     public LogFileInstruction(List<Patterns.Pattern> patterns, File logFile) {
+
         this.patterns = patterns;
         this.logFile = logFile;
     }
 
     @Override
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-            Environment environment) throws InstructionExecutionException {
-        logger.info("Executing LogFileInstruction");
+            Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
+
         List<File> logFiles = new ArrayList<>();
         logFiles.add(logFile);
-        ReportAppender reportAppender = new ReportAppender() {
-
-            @Override
-            public void appendSection(String format, Object... data) {
-                System.out.printf(format, data);
-                System.out.println("-------------");
-                System.out.println();
-
-            }
-
-            @Override
-            public void append(String format, Object... data) {
-                System.out.printf(format, data);
-            }
-        };
-        LogFileProcessor.processFiles(userIdentifier, reportAppender, patterns, logFiles);
-        return null;
+        LogFileProcessor logFileProcessor = new LogFileProcessor();
+        logFileProcessor.processFiles(userIdentifier, reportAppender, patterns, logFiles);
+        return new ForgetMeResult();
     }
 }

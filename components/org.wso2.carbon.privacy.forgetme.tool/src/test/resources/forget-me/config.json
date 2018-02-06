@@ -3,12 +3,13 @@
     "log-file"
   ],
   "directories": [
+    
     {
-      "dir": "log-config/carbon-log",
+      "dir": "log-config/audit",
       "type": "log-file",
       "processor" : "log-file",
       "log-file-path" : "/Users/ruwan/Dev/wso2/product-is/5.5.0/gdpr-compliance-tool/tmp/logs",
-      "log-file-name-regex" : "wso2carbon.log"
+      "log-file-name-regex" : "audit.log"
     },
     {
       "dir": "sql",

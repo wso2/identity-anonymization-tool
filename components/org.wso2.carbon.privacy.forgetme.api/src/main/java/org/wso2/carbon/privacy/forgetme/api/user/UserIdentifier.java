@@ -26,6 +26,7 @@ public class UserIdentifier {
     private String username;
     private String userStoreDomain;
     private String tenantDomain;
+    private int tenantId = -1234;
     private String pseudonym;
 
     public String getUsername() {
@@ -60,5 +61,15 @@ public class UserIdentifier {
     public void setPseudonym(String pseudonym) {
 
         this.pseudonym = pseudonym;
+    }
+
+    public int getTenantId() {
+
+        return tenantId;
+    }
+
+    public void setTenantId(int tenantId) {
+
+        this.tenantId = tenantId;
     }
 }

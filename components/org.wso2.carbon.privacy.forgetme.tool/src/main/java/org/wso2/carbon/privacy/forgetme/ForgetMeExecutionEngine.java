@@ -13,11 +13,15 @@ import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.config.InstructionReaderConfig;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.processor.ForgetMeCompositeResult;
+import org.wso2.carbon.privacy.forgetme.report.PlainTextReportAppender;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
 import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -57,8 +61,8 @@ public class ForgetMeExecutionEngine {
      * Executes the engine.
      * This will start multiple processors in parallel threads.
      *
-     * @return
-     * @throws ForgetMeExecutionException
+     * @return valid ForgetMeResult.
+     * @throws ForgetMeExecutionException  upon any error while executing the set of instructions.
      */
     public ForgetMeResult execute() throws ForgetMeExecutionException {
 
@@ -73,7 +77,7 @@ public class ForgetMeExecutionEngine {
     /**
      * Waits for the completion of all the processors.
      *
-     * @param compositeResult
+     * @param compositeResult Collected results form all the executions.
      */
     private void waitForCompletion(ForgetMeCompositeResult compositeResult) {
 
@@ -98,7 +102,8 @@ public class ForgetMeExecutionEngine {
         for (String processorName : executors.keySet()) {
             List<ForgetMeInstruction> instructions = getInstructions(processorName, systemEnv);
             ProcessorConfig processorConfig = systemConfig.getProcessorConfigMap().get(processorName);
-            ProcessorPipeline processorPipeline = new ProcessorPipeline(userIdentifier, processorConfig, instructions);
+            ProcessorPipeline processorPipeline = new ProcessorPipeline(systemConfig.getWorkDir(), processorName,
+                    userIdentifier, processorConfig, instructions);
             ExecutorService executorService = executors.get(processorName);
             Future<ForgetMeResult> future = executorService.submit(processorPipeline);
             submittedJobs.add(future);
@@ -115,14 +120,15 @@ public class ForgetMeExecutionEngine {
             InstructionReader reader = readerConfig.getInstructionReader();
             Path path = entry.getKey();
             if (reader.getType().equals(processorName)) {
-                List<ForgetMeInstruction> instructions = null;
                 try {
-                    instructions = reader.read(path, readerConfig.getProperties(), environment);
+                    List<ForgetMeInstruction> instructions = reader
+                            .read(path, readerConfig.getProperties(), environment);
+                    result.addAll(instructions);
                 } catch (ModuleException e) {
                     throw new ForgetMeExecutionException(
                             "Unable to get instructions for the processor : " + processorName, e);
                 }
-                result.addAll(instructions);
+
             }
         }
 
@@ -143,11 +149,13 @@ public class ForgetMeExecutionEngine {
         private String threadNamePrefix;
 
         public SimpleThreadFactory(String threadNamePrefix) {
+
             this.threadNamePrefix = threadNamePrefix;
         }
 
         @Override
         public Thread newThread(Runnable r) {
+
             return new Thread(r, threadNamePrefix);
         }
     }
@@ -162,12 +170,16 @@ public class ForgetMeExecutionEngine {
     private static class ProcessorPipeline implements Callable<ForgetMeResult> {
 
         private ProcessorConfig processorConfig;
-        private List<ForgetMeInstruction> instructionList = new ArrayList<>();
+        private List<ForgetMeInstruction> instructionList;
         private UserIdentifier userIdentifier;
+        private String name;
+        private Path workDir;
 
-        public ProcessorPipeline(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-                List<ForgetMeInstruction> instructionList) {
+        public ProcessorPipeline(Path workDir, String name, UserIdentifier userIdentifier,
+                ProcessorConfig processorConfig, List<ForgetMeInstruction> instructionList) {
 
+            this.workDir = workDir;
+            this.name = name;
             this.userIdentifier = userIdentifier;
             this.processorConfig = processorConfig;
             this.instructionList = instructionList;
@@ -176,13 +188,23 @@ public class ForgetMeExecutionEngine {
         @Override
         public ForgetMeResult call() throws InstructionExecutionException {
 
-            ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
-            Environment environment = new SystemEnv();
-
-            for (ForgetMeInstruction instruction : instructionList) {
-                instruction.execute(userIdentifier, processorConfig, environment);
+            Path reportFile = Paths.get(workDir.toString(), getReportFileName());
+            try (PlainTextReportAppender defaultReportAppender = new PlainTextReportAppender(reportFile.toFile(),
+                    name)) {
+                defaultReportAppender.open();
+                ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
+                Environment environment = new SystemEnv();
+                for (ForgetMeInstruction instruction : instructionList) {
+                    instruction.execute(userIdentifier, processorConfig, environment, defaultReportAppender);
+                }
+                return forgetMeResult;
             }
-            return forgetMeResult;
+        }
+
+        private String getReportFileName() {
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+            return "Report-" + name + "-" + simpleDateFormat.format(new Date()) + ".txt";
         }
     }
 }

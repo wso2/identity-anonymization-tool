@@ -1,5 +1,6 @@
 package org.wso2.carbon.privacy.forgetme.api.runtime;
 
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 /**
@@ -17,7 +18,7 @@ public interface ForgetMeInstruction {
      * @return
      * @throws InstructionExecutionException
      */
-    ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig, Environment environment)
-            throws InstructionExecutionException;
+    ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig, Environment environment,
+            ReportAppender reportAppender) throws InstructionExecutionException;
 
 }

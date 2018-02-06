@@ -27,28 +27,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 
+/**
+ * Log Processor to process Log Files.
+ *
+ */
 public class LogFileProcessor {
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
+    private static final String TEMP_FILE_PREFIX = ".temp.txt";
 
     private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
 
-
-    public static void processFiles(UserIdentifier userIdentifier, ReportAppender reportAppender,
+    public void processFiles(UserIdentifier userIdentifier, ReportAppender reportAppender,
             List<Patterns.Pattern> patternList, List<File> fileList) throws LogProcessorException {
 
-
         Map<String, String> templatePatternData = getTemplatePatternData(userIdentifier);
+        List<MatchAndReplace> compiledPatterns = compile(patternList, templatePatternData);
         for (File file : fileList) {
-            reportAppender.appendSection("File %s", file.getAbsolutePath());
+            reportAppender.appendSection("Starting File %s", file.getAbsolutePath());
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(file.toPath().toString() + ".temp"))) {
+                    BufferedWriter writer = new BufferedWriter(
+                            new FileWriter(file.toPath().toString() + TEMP_FILE_PREFIX))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
 
@@ -56,17 +57,15 @@ public class LogFileProcessor {
                     boolean patternMatched = false;
 
                     // Check the line for any detectPattern matches.
-                    for (Patterns.Pattern pattern : patternList) {
-                        String formattedDetectPattern = StrSubstitutor
-                                .replace(pattern.getDetectPattern(), templatePatternData).trim();
-                        Pattern regexp = Pattern.compile(formattedDetectPattern);
-                        Matcher matcher = regexp.matcher(replacement);
+                    for (MatchAndReplace matchAndReplace : compiledPatterns) {
+
+                        Matcher matcher = matchAndReplace.getPattern().matcher(replacement);
 
                         if (matcher.find()) {
                             // Pattern match hit.
                             patternMatched = true;
                             String formattedReplacePattern = StrSubstitutor
-                                    .replace(pattern.getReplacePattern(), templatePatternData);
+                                    .replace(matchAndReplace.getReplacePattern(), templatePatternData);
 
                             /* Here, if the replacePattern is not empty replace the username occurrences in the
                             line. If it is empty, it indicates that a possible match is found in the current line. */
@@ -90,33 +89,20 @@ public class LogFileProcessor {
             } catch (IOException ex) {
                 log.error("Error occurred while file read/write operation.", ex);
             }
-
+            reportAppender.appendSectionEnd("Completed " + file);
         }
     }
 
-    /**
-     * Read xml file for regex pattern configurations.
-     *
-     * @param xmlFile The config file.
-     * @return Patterns object.
-     * @throws LogProcessorException
-     */
-    public static Patterns readXML(File xmlFile) throws LogProcessorException {
+    private List<MatchAndReplace> compile(List<Patterns.Pattern> patternList, Map<String, String> templatePatternData) {
 
-        log.info("Reading pattern configuration file...");
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(Patterns.class);
-
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            Patterns patterns = (Patterns) unmarshaller.unmarshal(xmlFile);
-
-            Marshaller marshaller = jaxbContext.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            log.info("Read successful.");
-            return patterns;
-        } catch (JAXBException ex) {
-            throw new LogProcessorException("Error occurred while unmarshalling xml content.", ex);
+        List<MatchAndReplace> result = new ArrayList<>(patternList.size());
+        for (Patterns.Pattern pattern : patternList) {
+            String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(), templatePatternData)
+                    .trim();
+            Pattern regexp = Pattern.compile(formattedDetectPattern);
+            result.add(new MatchAndReplace(regexp, pattern.getReplacePattern()));
         }
+        return result;
     }
 
     /**
@@ -134,7 +120,7 @@ public class LogFileProcessor {
                 log.info("Deleting File From The Configured Path: " + filePath.toString());
 
                 Files.delete(filePath);
-                Path tempFilePath = Paths.get(filePath + ".temp");
+                Path tempFilePath = Paths.get(filePath + TEMP_FILE_PREFIX);
                 Files.move(tempFilePath, tempFilePath.resolveSibling(fileName));
                 log.info("Renamed the temp file '" + fileName + ".temp' to '" + fileName + "'");
 
@@ -145,40 +131,18 @@ public class LogFileProcessor {
     }
 
     /**
-     * Get list of filenames in the configured directory path.
-     *
-     * @return
-     * @throws LogProcessorException
-     */
-    public static List<File> getFileList(String path) throws LogProcessorException {
-
-        ArrayList<File> fileNames = new ArrayList<>();
-        try {
-            Files.walk(Paths.get(path)).forEach(filePath -> {
-                if (Files.isRegularFile(filePath)) {
-                    fileNames.add(filePath.toFile());
-                }
-            });
-        } catch (IOException e) {
-            throw new LogProcessorException("Error occurred while getting the file names from the directory path.", e);
-        }
-        return fileNames;
-    }
-
-    /**
      * Get actual data for configured templates in the regexes. E.g. ${username} in regex will be replaced with the
      * actual username.
      *
      * @param userIdentifier
      * @return Map of templates and their corresponding values.
      */
-    private static Map<String, String> getTemplatePatternData(UserIdentifier userIdentifier) {
+    private Map<String, String> getTemplatePatternData(UserIdentifier userIdentifier) {
 
         HashMap<String, String> patternData = new HashMap<>();
         patternData.put(LogProcessorConstants.USERNAME, userIdentifier.getUsername());
         patternData.put(LogProcessorConstants.TENANT_DOMAIN, userIdentifier.getTenantDomain());
-        //TODO: need a way to obtain tenant ID from provided tenant domain.
-        patternData.put(LogProcessorConstants.TENANT_ID, String.valueOf(-1234));
+        patternData.put(LogProcessorConstants.TENANT_ID, String.valueOf(userIdentifier.getTenantId()));
         if (StringUtils.equalsIgnoreCase(LogProcessorConstants.PRIMARY_USERSTORE_DOMAIN,
                 userIdentifier.getUserStoreDomain())) {
             patternData.put(LogProcessorConstants.USERSTORE_DOMAIN, "");
@@ -187,5 +151,30 @@ public class LogFileProcessor {
                     StringUtils.capitalize(userIdentifier.getUserStoreDomain()));
         }
         return patternData;
+    }
+
+    /**
+     * Class to hold Regex Match pattern and its counterpart replacement pattern.
+     */
+    private static class MatchAndReplace {
+
+        private Pattern pattern;
+        private String replacePattern;
+
+        public MatchAndReplace(Pattern pattern, String replacePattern) {
+
+            this.pattern = pattern;
+            this.replacePattern = replacePattern;
+        }
+
+        public Pattern getPattern() {
+
+            return pattern;
+        }
+
+        public String getReplacePattern() {
+
+            return replacePattern;
+        }
     }
 }

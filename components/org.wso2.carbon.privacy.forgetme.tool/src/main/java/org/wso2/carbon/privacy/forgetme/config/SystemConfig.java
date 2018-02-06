@@ -20,6 +20,7 @@ public class SystemConfig {
     private Map<Path, InstructionReaderConfig> directoryToInstructionReaderMap = new HashMap<>();
     private Map<String, ProcessorConfig> processorConfigMap = new HashMap<>();
     private List<String> processors = new ArrayList<>();
+    private Path workDir;
 
     /**
      * Adds an instruction reader with the given path.
@@ -64,5 +65,13 @@ public class SystemConfig {
      */
     public List<String> getProcessors() {
         return Collections.unmodifiableList(processors);
+    }
+
+    public Path getWorkDir() {
+        return workDir;
+    }
+
+    public void setWorkDir(Path workDir) {
+        this.workDir = workDir;
     }
 }

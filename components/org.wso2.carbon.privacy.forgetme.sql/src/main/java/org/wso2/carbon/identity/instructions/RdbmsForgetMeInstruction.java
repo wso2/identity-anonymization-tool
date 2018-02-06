@@ -28,6 +28,7 @@ import org.wso2.carbon.identity.module.Module;
 import org.wso2.carbon.identity.sql.SQLFileReader;
 import org.wso2.carbon.identity.sql.SQLQuery;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
@@ -57,7 +58,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
     @Override
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-            Environment environment) throws InstructionExecutionException {
+            Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
 
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
 
