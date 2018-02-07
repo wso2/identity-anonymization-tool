@@ -14,7 +14,7 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 import org.wso2.carbon.privacy.forgetme.config.ConfigConstants;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
-import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
+import org.wso2.carbon.privacy.forgetme.runtime.VariableResolver;
 
 import java.io.File;
 import java.io.FileReader;
@@ -45,6 +45,7 @@ public class ConfigReader {
     private static ConfigReader configReader = new ConfigReader();
 
     public static ConfigReader getInstance() {
+
         return configReader;
     }
 
@@ -67,7 +68,7 @@ public class ConfigReader {
      * @return
      * @throws ForgetMeExecutionException
      */
-    public SystemConfig readSystemConfig(File file) throws ForgetMeExecutionException {
+    public SystemConfig readSystemConfig(File file, Environment environment) throws ForgetMeExecutionException {
 
         SystemConfig systemConfig = new SystemConfig();
         JSONParser jsonParser = new JSONParser();
@@ -90,7 +91,7 @@ public class ConfigReader {
 
                 Object directories = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_DIRECTORIES);
                 if (directories instanceof JSONArray) {
-                    loadDirectories((JSONArray) directories, systemConfig, basePath);
+                    loadDirectories((JSONArray) directories, systemConfig, basePath, environment);
                 }
             }
         } catch (IOException e) {
@@ -103,21 +104,23 @@ public class ConfigReader {
         return systemConfig;
     }
 
-    private void loadDirectories(JSONArray directories, SystemConfig systemConfig, Path basePath)
-            throws ForgetMeExecutionException {
+    private void loadDirectories(JSONArray directories, SystemConfig systemConfig, Path basePath,
+            Environment environment) throws ForgetMeExecutionException {
 
+        VariableResolver variableResolver = new VariableResolver(environment);
         for (Object e : directories) {
             if (e instanceof JSONObject) {
                 JSONObject dirConfig = (JSONObject) e;
                 Object type = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
                 Object dir = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_DIR);
                 Object processor = dirConfig.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
-                Properties additionalProperties = getAdditionalProperties(dirConfig, new SystemEnv());
+                Properties additionalProperties = getAdditionalProperties(dirConfig, variableResolver);
                 if (type instanceof String && dir instanceof String && processor instanceof String) {
                     String processorName = (String) processor;
                     if (systemConfig.getProcessors().contains(processorName)) {
                         InstructionReader instructionReader = instructionReaderMap.get(processor);
-                        Path path = Paths.get((String) dir);
+                        String pathStr = variableResolver.resolve((String) dir);
+                        Path path = Paths.get(pathStr);
                         if (!path.isAbsolute()) {
                             path = basePath.resolve((String) dir);
                         }
@@ -137,11 +140,11 @@ public class ConfigReader {
         }
     }
 
-    private Properties getAdditionalProperties(JSONObject dirConfig, Environment environment) {
+    private Properties getAdditionalProperties(JSONObject dirConfig, VariableResolver variableResolver) {
 
         Properties properties = new Properties();
         dirConfig.forEach((key, value) -> {
-            properties.setProperty(key.toString(), value.toString()); //TODO: Parse environment
+            properties.setProperty(key.toString(), variableResolver.resolve(value.toString()));
         });
         return properties;
     }
