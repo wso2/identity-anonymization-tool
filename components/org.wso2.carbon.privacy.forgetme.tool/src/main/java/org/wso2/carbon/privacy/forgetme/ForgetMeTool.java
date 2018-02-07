@@ -12,6 +12,7 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
+import org.wso2.carbon.privacy.forgetme.runtime.CommandlineException;
 import org.wso2.carbon.privacy.forgetme.runtime.DefaultEnvironment;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
 import org.wso2.carbon.privacy.forgetme.runtime.NestedEnvironment;
@@ -35,9 +36,11 @@ public class ForgetMeTool {
     private static final String CMD_OPTION_CONFIG_USER_NAME = "U";
     private static final String CMD_OPTION_CONFIG_USER_DOMAIN = "D";
     private static final String CMD_OPTION_CONFIG_TENANT_DOMAIN = "T";
+    private static final String CMD_OPTION_CONFIG_TENANT_ID = "TID";
     private static final String CMD_OPTION_CONFIG_USER_PSEUDONYM = "pu";
 
-    private static final String DEFAULT_TENANT_DOMAIN = "-1234";
+    private static final String DEFAULT_TENANT_DOMAIN = "carbon.super";
+    private static final String DEFAULT_TENANT_ID = "-1234";
     private static final String DEFAULT_USER_DOMAIN = "PRIMARY";
     private static final String CARBON_HOME = "CARBON_HOME";
 
@@ -55,6 +58,7 @@ public class ForgetMeTool {
         options.addOption(CMD_OPTION_CONFIG_USER_NAME, true, "User Name");
         options.addOption(CMD_OPTION_CONFIG_USER_DOMAIN, true, "User Domain");
         options.addOption(CMD_OPTION_CONFIG_TENANT_DOMAIN, true, "Tenant Domain");
+        options.addOption(CMD_OPTION_CONFIG_TENANT_ID, true, "Tenant ID");
         options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true, "Pseudonym");
 
         CommandLineParser parser = new DefaultParser();
@@ -69,12 +73,14 @@ public class ForgetMeTool {
         }
         UserIdentifier userIdentifier;
         if (cmd.hasOption(CMD_OPTION_CONFIG_USER_NAME)) {
-            String userName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_NAME);
-            String domainName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_DOMAIN, DEFAULT_USER_DOMAIN);
-            String tenantName = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_DOMAIN, DEFAULT_TENANT_DOMAIN);
-            String pseudonym = createPseudonym(cmd.getOptionValue(CMD_OPTION_CONFIG_USER_PSEUDONYM));
-            userIdentifier = createUserIdentifier(userName, domainName, tenantName);
-            userIdentifier.setPseudonym(pseudonym);
+            try {
+                userIdentifier = createUserIdentifier(cmd);
+            } catch (CommandlineException cpe) {
+                //We print the output into stdout.
+                System.out.println(cpe.getMessage());
+                printError(options);
+                return;
+            }
         } else {
             printError(options);
             return;
@@ -129,13 +135,33 @@ public class ForgetMeTool {
         return forgetMeResult;
     }
 
-    private static UserIdentifier createUserIdentifier(String userName, String domainName, String tenantName) {
+    private static UserIdentifier createUserIdentifier(CommandLine cmd) throws CommandlineException {
+
+        String userName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_NAME);
+        String domainName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_DOMAIN, DEFAULT_USER_DOMAIN);
+        String tenantName = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_DOMAIN, DEFAULT_TENANT_DOMAIN);
+        String tenantId = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_ID);
+        String pseudonym = createPseudonym(cmd.getOptionValue(CMD_OPTION_CONFIG_USER_PSEUDONYM));
+
+        if (!DEFAULT_TENANT_DOMAIN.equals(tenantName) && StringUtils.isEmpty(tenantId)) {
+            throw new CommandlineException("Tenant ID needs to be passed for tenant name : " + tenantName);
+        }
 
         UserIdentifier userIdentifier = new UserIdentifier();
         userIdentifier.setUsername(userName);
         userIdentifier.setUserStoreDomain(domainName);
         userIdentifier.setTenantDomain(tenantName);
-        userIdentifier.setPseudonym(UUID.randomUUID().toString());
+        userIdentifier.setPseudonym(pseudonym);
+
+        if (StringUtils.isNoneEmpty(tenantId)) {
+            try {
+                int tid = Integer.parseInt(tenantId);
+                userIdentifier.setTenantId(tid);
+            } catch (NumberFormatException nfe) {
+                throw new CommandlineException("Error in converting the number as tenant ID : " + tenantId);
+            }
+        }
+
         return userIdentifier;
     }
 
