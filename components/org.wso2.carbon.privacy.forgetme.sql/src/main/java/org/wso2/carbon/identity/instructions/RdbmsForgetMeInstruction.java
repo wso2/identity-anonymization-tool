@@ -47,7 +47,7 @@ import java.util.List;
  */
 public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
-    private static Logger log = LoggerFactory.getLogger(RdbmsForgetMeInstruction.class);
+    private static final Logger log = LoggerFactory.getLogger(RdbmsForgetMeInstruction.class);
 
     private Path sqlDir;
 
@@ -61,7 +61,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
             Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
 
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
-
+        reportAppender.appendSection("Processing SQL in directory %s", sqlDir);
         try {
             List<SQLQuery> sqlQueries = sqlFileReader.readAllQueries();
 
@@ -88,11 +88,13 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
                     throw new SQLModuleException("Cannot find a suitable execution module.");
                 }
                 sqlExecutionModule.execute(userSQLQuery);
+                reportAppender.appendSection("Executed query %s", userSQLQuery);
             }
         } catch (ModuleException e) {
             throw new InstructionExecutionException("Error occured while executing sql from : " + sqlDir, e);
         }
 
+        reportAppender.appendSection("Completed all SQLs in directory %s", sqlDir);
         return new ForgetMeResult();
     }
 }
