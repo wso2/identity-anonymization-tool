@@ -19,15 +19,11 @@
 package org.wso2.carbon.identity.module;
 
 import org.apache.commons.lang.StringUtils;
-import org.wso2.carbon.datasource.core.DataSourceManager;
-import org.wso2.carbon.datasource.core.api.DataSourceService;
-import org.wso2.carbon.datasource.core.exception.DataSourceException;
-import org.wso2.carbon.datasource.core.impl.DataSourceServiceImpl;
 import org.wso2.carbon.identity.config.DataSourceConfig;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.identity.exception.SQLModuleException;
 import org.wso2.carbon.identity.sql.UserSQLQuery;
 import org.wso2.carbon.identity.util.NamedPreparedStatement;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,6 +35,7 @@ import javax.sql.DataSource;
 public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
 
     private static final String USERNAME = "username";
+    private static final String TENANT_ID = "tenant_id";
     private static final String TENANT_DOMAIN = "tenant_domain";
     private static final String PSEUDONYM = "pseudonym";
     private static final String PRIMARY_DOMAIN = "PRIMARY";
@@ -73,8 +70,8 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
                 namedPreparedStatement.setString(USERNAME, username);
             }
 
-            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(TENANT_DOMAIN); i++) {
-                namedPreparedStatement.setString(TENANT_DOMAIN, userSQLQuery.getUserIdentifier().getTenantDomain());
+            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(TENANT_ID); i++) {
+                namedPreparedStatement.setInt(TENANT_ID, userSQLQuery.getUserIdentifier().getTenantId());
             }
 
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(PSEUDONYM); i++) {
