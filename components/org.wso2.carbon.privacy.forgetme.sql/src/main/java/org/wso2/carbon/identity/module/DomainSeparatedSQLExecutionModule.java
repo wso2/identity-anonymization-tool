@@ -34,6 +34,7 @@ import javax.sql.DataSource;
 public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
 
     private static final String USERNAME = "username";
+    private static final String TENANT_ID = "tenant_id";
     private static final String TENANT_DOMAIN = "tenant_domain";
     private static final String USER_STORE_DOMAIN = "user_store_domain";
     private static final String PSEUDONYM = "pseudonym";
@@ -66,8 +67,8 @@ public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
                         .setString(USER_STORE_DOMAIN, userSQLQuery.getUserIdentifier().getUserStoreDomain());
             }
 
-            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(TENANT_DOMAIN); i++) {
-                namedPreparedStatement.setString(TENANT_DOMAIN, userSQLQuery.getUserIdentifier().getTenantDomain());
+            for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(TENANT_ID); i++) {
+                namedPreparedStatement.setInt(TENANT_ID, userSQLQuery.getUserIdentifier().getTenantId());
             }
 
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(PSEUDONYM); i++) {
