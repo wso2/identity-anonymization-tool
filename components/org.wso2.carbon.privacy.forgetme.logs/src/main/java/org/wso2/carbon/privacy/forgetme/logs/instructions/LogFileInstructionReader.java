@@ -22,9 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
-import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
+import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
 import java.io.File;

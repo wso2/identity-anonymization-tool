@@ -24,14 +24,14 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
+import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 import org.wso2.carbon.privacy.forgetme.config.ConfigConstants;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
-import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
 import org.wso2.carbon.privacy.forgetme.runtime.VariableResolver;
 
 import java.io.File;

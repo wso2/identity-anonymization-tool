@@ -53,7 +53,7 @@ public class LogFileInstruction implements ForgetMeInstruction {
 
     @Override
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-            Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
+                                  Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
 
         List<File> logFiles = new ArrayList<>();
         logFiles.add(logFile);
