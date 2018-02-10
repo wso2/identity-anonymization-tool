@@ -26,15 +26,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.runtime.CommandlineException;
 import org.wso2.carbon.privacy.forgetme.runtime.DefaultEnvironment;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
-import org.wso2.carbon.privacy.forgetme.runtime.NestedEnvironment;
 import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
+import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
+import org.wso2.carbon.privacy.forgetme.runtime.NestedEnvironment;
 
 import java.io.File;
 import java.io.IOException;
