@@ -26,15 +26,15 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.runtime.CommandlineException;
 import org.wso2.carbon.privacy.forgetme.runtime.DefaultEnvironment;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
-import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
-import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.runtime.NestedEnvironment;
+import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.IOException;
@@ -94,7 +94,8 @@ public class ForgetMeTool {
             try {
                 userIdentifier = createUserIdentifier(cmd);
             } catch (CommandlineException cpe) {
-                //We print the output into stdout.
+
+                // We print the output into stdout.
                 System.out.println(cpe.getMessage());
                 printError(options);
                 return;
@@ -106,14 +107,14 @@ public class ForgetMeTool {
 
         Environment sysEnvironment = new SystemEnv();
         DefaultEnvironment defaultEnvironment = new DefaultEnvironment();
-        polulateEnvironment(defaultEnvironment, cmd);
+        populateEnvironment(defaultEnvironment, cmd);
 
         NestedEnvironment nestedEnvironment = new NestedEnvironment(sysEnvironment, defaultEnvironment);
         ForgetMeTool forgetMeTool = new ForgetMeTool();
         forgetMeTool.process(homeDir, userIdentifier, nestedEnvironment);
     }
 
-    private static void polulateEnvironment(DefaultEnvironment defaultEnvironment, CommandLine cmd) {
+    private static void populateEnvironment(DefaultEnvironment defaultEnvironment, CommandLine cmd) {
 
         if (cmd.hasOption(CMD_OPTION_CONFIG_CARBON_HOME)) {
             defaultEnvironment.setProperty(CARBON_HOME, cmd.getOptionValue(CMD_OPTION_CONFIG_CARBON_HOME));

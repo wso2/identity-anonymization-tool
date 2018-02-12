@@ -49,4 +49,8 @@ public class UserSQLQuery {
         return StringUtils.countMatches(sqlQuery.getSqlQuery(), substring);
     }
 
+    @Override
+    public String toString() {
+        return sqlQuery.toString();
+    }
 }

@@ -31,6 +31,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -119,7 +120,7 @@ public class LogFileInstructionReader implements InstructionReader {
         Pattern regexPattern = Pattern.compile(logFileNameRegex);
 
         File[] logFiles = dir.listFiles((dir1, name) -> regexPattern.matcher(name).matches());
-        return Arrays.asList(logFiles);
+        return logFiles != null ? Arrays.asList(logFiles) : Collections.EMPTY_LIST;
     }
 
     /**

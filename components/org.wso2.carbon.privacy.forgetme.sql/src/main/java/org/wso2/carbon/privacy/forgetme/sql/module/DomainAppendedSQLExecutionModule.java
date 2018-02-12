@@ -19,6 +19,8 @@
 package org.wso2.carbon.privacy.forgetme.sql.module;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 import org.wso2.carbon.privacy.forgetme.sql.exception.SQLModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
@@ -34,6 +36,8 @@ import javax.sql.DataSource;
  */
 public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
 
+    private static final Logger log = LoggerFactory.getLogger(DomainAppendedSQLExecutionModule.class);
+
     private static final String USERNAME = "username";
     private static final String TENANT_ID = "tenant_id";
     private static final String TENANT_DOMAIN = "tenant_domain";
@@ -47,6 +51,9 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
 
         try {
             dataSource = dataSourceConfig.getDatasource();
+            if (log.isDebugEnabled()) {
+                log.debug("Data source initialized with name: {}.", dataSource.getClass());
+            }
         } catch (SQLModuleException e) {
             throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
@@ -56,9 +63,10 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
     public void execute(UserSQLQuery userSQLQuery) throws ModuleException {
 
         String username = userSQLQuery.getUserIdentifier().getUsername();
-        
-        if (StringUtils.contains(username, PRIMARY_DOMAIN)) {
-            username = StringUtils.substringAfter(username, DOMAIN_SEPARATOR);
+
+        // If this user is in a secondary domain, we have to append the domain name to username.
+        if (!StringUtils.equals(userSQLQuery.getUserIdentifier().getUserStoreDomain(), PRIMARY_DOMAIN)) {
+            username = userSQLQuery.getUserIdentifier().getUserStoreDomain() + DOMAIN_SEPARATOR + username;
         }
 
         try (Connection connection = dataSource.getConnection()) {
@@ -77,7 +85,12 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
             for (int i = 0; i < userSQLQuery.getNumberOfPlacesToReplace(PSEUDONYM); i++) {
                 namedPreparedStatement.setString(PSEUDONYM, userSQLQuery.getUserIdentifier().getPseudonym());
             }
+
             namedPreparedStatement.getPreparedStatement().execute();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Executed the sql query: {}.", userSQLQuery.getSqlQuery().toString());
+            }
         } catch (SQLException e) {
             throw new SQLModuleException(e);
         }

@@ -20,22 +20,22 @@ package org.wso2.carbon.privacy.forgetme.sql.instructions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionExecutionException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 import org.wso2.carbon.privacy.forgetme.sql.exception.SQLModuleException;
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainAppendedSQLExecutionModule;
+import org.wso2.carbon.privacy.forgetme.sql.module.DomainSeparatedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.Module;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLFileReader;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLQuery;
 import org.wso2.carbon.privacy.forgetme.sql.sql.UserSQLQuery;
-import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
-import org.wso2.carbon.privacy.forgetme.sql.module.DomainSeparatedSQLExecutionModule;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -54,11 +54,15 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
     public RdbmsForgetMeInstruction(Path sqlDir) {
 
         this.sqlDir = sqlDir;
+        if (log.isDebugEnabled()) {
+            log.debug("SQL directory path is set to: {}. ", sqlDir.toString());
+        }
     }
 
     @Override
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
-                                  Environment environment, ReportAppender reportAppender) throws InstructionExecutionException {
+                                  Environment environment, ReportAppender reportAppender)
+            throws InstructionExecutionException {
 
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
         reportAppender.appendSection("Processing SQL in directory %s", sqlDir);
@@ -78,17 +82,22 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
                 Module<UserSQLQuery> sqlExecutionModule;
                 switch (sqlQuery.getSqlQueryType()) {
-                case DOMAIN_APPENDED:
-                    sqlExecutionModule = new DomainAppendedSQLExecutionModule(dataSourceConfig);
-                    break;
-                case DOMAIN_SEPARATED:
-                    sqlExecutionModule = new DomainSeparatedSQLExecutionModule(dataSourceConfig);
-                    break;
-                default:
-                    throw new SQLModuleException("Cannot find a suitable execution module.");
+                    case DOMAIN_APPENDED:
+                        sqlExecutionModule = new DomainAppendedSQLExecutionModule(dataSourceConfig);
+                        break;
+                    case DOMAIN_SEPARATED:
+                        sqlExecutionModule = new DomainSeparatedSQLExecutionModule(dataSourceConfig);
+                        break;
+                    default:
+                        throw new SQLModuleException("Cannot find a suitable execution module.");
                 }
+
+                if (log.isDebugEnabled()) {
+                    log.debug("{} module selected for {} SQL query.", sqlQuery.getSqlQueryType(), sqlQuery);
+                }
+
                 sqlExecutionModule.execute(userSQLQuery);
-                reportAppender.appendSection("Executed query %s", userSQLQuery);
+                reportAppender.append("Executed query %s", userSQLQuery);
             }
         } catch (ModuleException e) {
             throw new InstructionExecutionException("Error occurred while executing sql from : " + sqlDir, e);

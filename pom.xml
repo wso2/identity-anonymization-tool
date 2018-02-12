@@ -31,6 +31,7 @@
 
     <modules>
         <module>components/org.wso2.carbon.privacy.forgetme.api</module>
+        <module>components/org.wso2.carbon.privacy.forgetme.conf</module>
         <module>components/org.wso2.carbon.privacy.forgetme.sql</module>
         <module>components/org.wso2.carbon.privacy.forgetme.logs</module>
         <module>components/org.wso2.carbon.privacy.forgetme.tool</module>
@@ -61,6 +62,11 @@
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>${jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven.resource.plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -173,6 +179,7 @@
         <org.slf4j.version>1.7.25</org.slf4j.version>
 
         <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
+        <maven.resource.plugin.version>3.0.2</maven.resource.plugin.version>
         <jacoco.version>0.7.9</jacoco.version>
 
         <org.junit.version>3.8.1</org.junit.version>
