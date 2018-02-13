@@ -193,7 +193,7 @@ public class ConfigReader {
                                 "No processor configuration extension found for : " + processor + ", dir: " + dir);
                     } else {
                         Path path = basePath.resolve((String) dir);
-                        ProcessorConfig processorConfig = null;
+                        ProcessorConfig processorConfig;
                         try {
                             processorConfig = processorConfigReader.readProcessorConfig(path);
                             systemConfig.addProcessorConfig((String) processor, processorConfig);
@@ -209,6 +209,5 @@ public class ConfigReader {
                 }
             }
         }
-        ;
     }
 }

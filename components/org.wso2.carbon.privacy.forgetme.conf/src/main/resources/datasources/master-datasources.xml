@@ -19,12 +19,11 @@
 <datasources-configuration>
     <datasources>
         <datasource>
-            <name>WSO2_CARBON_DB</name>
+            <name>identity</name>
             <description>The datasource used for registry and user manager</description>
             <definition type="RDBMS">
                 <configuration>
-                    <url>jdbc:h2:file:/home/jayanga/WSO2/Identity-Server/Testing/wso2is-5.4.0/repository/database/WSO2CARBON_DB</url>
-                    <!--<url>jdbc:h2:./target/database/ANALYTICS_DB1;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000</url>-->
+                    <url>jdbc:h2:${IS_HOME}/repository/database/WSO2CARBON_DB;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=60000</url>
                     <username>wso2carbon</username>
                     <password>wso2carbon</password>
                     <driverClassName>org.h2.Driver</driverClassName>

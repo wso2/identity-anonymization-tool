@@ -97,6 +97,9 @@
                 <configuration>
                     <assembleDirectory>target/dist</assembleDirectory>
                     <useWildcardClassPath>true</useWildcardClassPath>
+                    <configurationSourceDirectory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf</configurationSourceDirectory>
+                    <configurationDirectory>conf</configurationDirectory>
+                    <copyConfigurationDirectory>true</copyConfigurationDirectory>
                     <repositoryLayout>flat</repositoryLayout>
                     <repositoryName>lib</repositoryName>
                     <programs>
