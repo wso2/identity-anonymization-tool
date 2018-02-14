@@ -22,6 +22,8 @@ import org.wso2.carbon.datasource.core.DataSourceManager;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 
+import java.util.Map;
+
 /**
  * Module config for datasources.
  *
@@ -29,12 +31,20 @@ import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 public class DatasourceProcessorConfig implements ProcessorConfig {
 
     private DataSourceManager dataSourceManager;
+    private Map<String, String> directoryToDatasourceMap;
 
-    public DatasourceProcessorConfig(DataSourceManager dataSourceManager) {
+    public DatasourceProcessorConfig(DataSourceManager dataSourceManager,
+                                     Map<String, String> directoryToDatasourceMap) {
         this.dataSourceManager = dataSourceManager;
+        this.directoryToDatasourceMap = directoryToDatasourceMap;
     }
 
     public DataSourceConfig getDataSourceConfig(String name) {
+
+        if (directoryToDatasourceMap.containsKey(name)) {
+            name = directoryToDatasourceMap.get(name);
+        }
+
         return new DataSourceConfig(name, dataSourceManager);
     }
 }

@@ -55,8 +55,8 @@
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
+            <groupId>com.h2database.wso2</groupId>
+            <artifactId>h2-database-engine</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -102,6 +102,7 @@
                     <copyConfigurationDirectory>true</copyConfigurationDirectory>
                     <repositoryLayout>flat</repositoryLayout>
                     <repositoryName>lib</repositoryName>
+                    <extraJvmArguments>-Djndi.bind.off="true"</extraJvmArguments>
                     <programs>
                         <program>
                             <mainClass>org.wso2.carbon.privacy.forgetme.ForgetMeTool</mainClass>
@@ -115,6 +116,50 @@
                         <goals>
                             <goal>assemble</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>create-dist-zip</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <echo message="Creating the zip file."/>
+                                <mkdir dir="${project.build.directory}"/>
+                                <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip"
+                                     basedir="${project.build.directory}/dist"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <id>upload-dist-zip</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.zip</file>
+                                    <type>zip</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

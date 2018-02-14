@@ -179,13 +179,13 @@ public class ConfigReader {
     private void loadExtensions(JSONArray extensions, SystemConfig systemConfig, Path basePath)
             throws ForgetMeExecutionException {
 
-        for (Iterator iterator = extensions.iterator(); iterator.hasNext(); ) {
-            Object e = iterator.next();
+        for (Object e : extensions) {
             if (e instanceof JSONObject) {
                 JSONObject extension = (JSONObject) e;
                 Object processor = extension.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
                 Object type = extension.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
                 Object dir = extension.get(ConfigConstants.CONFIG_ELEMENT_DIR);
+                Object properties = extension.get(ConfigConstants.CONFIG_ELEMENT_PROPERTIES);
                 if (processor instanceof String && dir instanceof String && type instanceof String) {
                     ProcessorConfigReader processorConfigReader = stringProcessorConfigReaderMap.get(type);
                     if (processorConfigReader == null) {
@@ -195,7 +195,13 @@ public class ConfigReader {
                         Path path = basePath.resolve((String) dir);
                         ProcessorConfig processorConfig;
                         try {
-                            processorConfig = processorConfigReader.readProcessorConfig(path);
+                            Map<String, String> propertiesMap;
+                            if (properties instanceof JSONArray) {
+                                propertiesMap = getPropertiesMap((JSONArray) properties);
+                            } else {
+                                propertiesMap = new HashMap<>();
+                            }
+                            processorConfig = processorConfigReader.readProcessorConfig(path, propertiesMap);
                             systemConfig.addProcessorConfig((String) processor, processorConfig);
                             if (log.isDebugEnabled()) {
                                 log.debug("Loaded processor config : {} from directory : {}", processorConfig, path);
@@ -209,5 +215,17 @@ public class ConfigReader {
                 }
             }
         }
+    }
+
+    private Map<String, String> getPropertiesMap(JSONArray jsonArray) {
+
+        Map<String, String> propertiesMap = new HashMap<>();
+        for (Object arrayItem : jsonArray) {
+            JSONObject jsonObject = (JSONObject) arrayItem;
+            for (Object key : jsonObject.keySet()) {
+                propertiesMap.put((String) key, (String) jsonObject.get(key));
+            }
+        }
+        return propertiesMap;
     }
 }

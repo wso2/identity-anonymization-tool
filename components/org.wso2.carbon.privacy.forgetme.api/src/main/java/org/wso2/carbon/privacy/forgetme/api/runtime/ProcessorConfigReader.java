@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.privacy.forgetme.api.runtime;
 
+import java.util.Map;
+
 import java.nio.file.Path;
 
 /**
@@ -41,6 +43,6 @@ public interface ProcessorConfigReader<T extends ProcessorConfig> {
      * @param path
      * @return
      */
-    T readProcessorConfig(Path path) throws ModuleException;
+    T readProcessorConfig(Path path, Map<String, String> properties) throws ModuleException;
 
 }
