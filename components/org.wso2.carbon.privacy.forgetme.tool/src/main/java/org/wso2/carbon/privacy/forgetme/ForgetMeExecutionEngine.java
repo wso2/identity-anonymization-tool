@@ -112,7 +112,7 @@ public class ForgetMeExecutionEngine {
                 log.error("Interrupted while executing the processor thread : " + future, e);
             }
         }
-        log.info("All processors has been properly shut-down");
+        log.info("All processors have been properly shut-down");
     }
 
     private void startExecutors() throws ForgetMeExecutionException {
@@ -215,6 +215,7 @@ public class ForgetMeExecutionEngine {
                 for (ForgetMeInstruction instruction : instructionList) {
                     instruction.execute(userIdentifier, processorConfig, environment, defaultReportAppender);
                 }
+                log.info("Processor execution completed. Processor : " + name);
                 return forgetMeResult;
             }
         }
