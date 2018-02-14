@@ -38,6 +38,12 @@ import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.UUID;
 
 /**
@@ -56,6 +62,7 @@ public class ForgetMeTool {
     private static final String CMD_OPTION_CONFIG_TENANT_DOMAIN = "T";
     private static final String CMD_OPTION_CONFIG_TENANT_ID = "TID";
     private static final String CMD_OPTION_CONFIG_USER_PSEUDONYM = "pu";
+    private static final String CMD_OPTION_HELP = "help";
 
     private static final String DEFAULT_TENANT_DOMAIN = "carbon.super";
     private static final String DEFAULT_TENANT_ID = "-1234";
@@ -71,16 +78,23 @@ public class ForgetMeTool {
 
         Options options = new Options();
 
-        options.addOption(CMD_OPTION_CONFIG_DIR, true, "Directory to scan");
-        options.addOption(CMD_OPTION_CONFIG_CARBON_HOME, true, "Carbon Home");
-        options.addOption(CMD_OPTION_CONFIG_USER_NAME, true, "User Name");
-        options.addOption(CMD_OPTION_CONFIG_USER_DOMAIN, true, "User Domain");
-        options.addOption(CMD_OPTION_CONFIG_TENANT_DOMAIN, true, "Tenant Domain");
-        options.addOption(CMD_OPTION_CONFIG_TENANT_ID, true, "Tenant ID");
-        options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true, "Pseudonym");
+        options.addOption(CMD_OPTION_CONFIG_DIR, true, "Directory where config.json file located (mandatory)");
+        options.addOption(CMD_OPTION_HELP, false, "Help");
+        options.addOption(CMD_OPTION_CONFIG_CARBON_HOME, true, "Carbon Home (optional)");
+        options.addOption(CMD_OPTION_CONFIG_USER_NAME, true, "User Name (mandatory)");
+        options.addOption(CMD_OPTION_CONFIG_USER_DOMAIN, true, "User Domain (optional, default: PRIMARY");
+        options.addOption(CMD_OPTION_CONFIG_TENANT_DOMAIN, true, "Tenant Domain (optional, default: carbon.super)");
+        options.addOption(CMD_OPTION_CONFIG_TENANT_ID, true, "Tenant ID (optional. default: -1234)");
+        options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true,
+                "Pseudonym, which the user name to be replaced with (optional)");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
+
+        if (cmd.hasOption(CMD_OPTION_HELP)) {
+            emitHelp(System.out);
+            return;
+        }
 
         String homeDir;
         if (cmd.hasOption(CMD_OPTION_CONFIG_DIR)) {
@@ -112,6 +126,30 @@ public class ForgetMeTool {
         NestedEnvironment nestedEnvironment = new NestedEnvironment(sysEnvironment, defaultEnvironment);
         ForgetMeTool forgetMeTool = new ForgetMeTool();
         forgetMeTool.process(homeDir, userIdentifier, nestedEnvironment);
+    }
+
+    /**
+     * Writes the help content to the output stream.
+     *
+     * @param out
+     */
+    private static void emitHelp(PrintStream out) {
+
+        InputStream inputStream = ForgetMeTool.class.getClassLoader().getResourceAsStream("help.md");
+        ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
+        WritableByteChannel writableByteChannel = Channels.newChannel(out);
+        ByteBuffer buffer = ByteBuffer.allocateDirect(512);
+        try {
+            while (readableByteChannel.read(buffer) != -1) {
+                buffer.flip();
+                while (buffer.hasRemaining()) {
+                    writableByteChannel.write(buffer);
+                }
+                buffer.clear();
+            }
+        } catch (IOException e) {
+            logger.error("Could not read the help file.");
+        }
     }
 
     private static void populateEnvironment(DefaultEnvironment defaultEnvironment, CommandLine cmd) {
