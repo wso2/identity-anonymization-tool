@@ -60,6 +60,11 @@ public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
     @Override
     public void execute(UserSQLQuery userSQLQuery) throws ModuleException {
 
+        if (dataSource == null) {
+            log.warn("No data source configured for name: " + userSQLQuery.getSqlQuery().getBaseDirectory());
+            return;
+        }
+
         try (Connection connection = dataSource.getConnection()) {
 
             NamedPreparedStatement namedPreparedStatement = new NamedPreparedStatement(connection,

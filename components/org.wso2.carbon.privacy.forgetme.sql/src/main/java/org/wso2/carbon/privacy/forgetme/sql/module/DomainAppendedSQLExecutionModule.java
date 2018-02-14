@@ -62,6 +62,11 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
     @Override
     public void execute(UserSQLQuery userSQLQuery) throws ModuleException {
 
+        if (dataSource == null) {
+            log.warn("No data source configured for name: " + userSQLQuery.getSqlQuery().getBaseDirectory());
+            return;
+        }
+
         String username = userSQLQuery.getUserIdentifier().getUsername();
 
         // If this user is in a secondary domain, we have to append the domain name to username.

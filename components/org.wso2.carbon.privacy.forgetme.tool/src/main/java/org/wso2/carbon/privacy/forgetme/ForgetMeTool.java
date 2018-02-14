@@ -38,13 +38,13 @@ import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
