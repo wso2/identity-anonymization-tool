@@ -1,0 +1,3 @@
+UPDATE ACT_HI_ACTINST
+SET ASSIGNEE_ = `pseudonym`
+WHERE ASSIGNEE_ = `username`

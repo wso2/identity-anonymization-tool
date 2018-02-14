@@ -1,0 +1,3 @@
+UPDATE ACT_HI_PROCINST
+SET START_USER_ID_ = `pseudonym`
+WHERE START_USER_ID_ = `username`
