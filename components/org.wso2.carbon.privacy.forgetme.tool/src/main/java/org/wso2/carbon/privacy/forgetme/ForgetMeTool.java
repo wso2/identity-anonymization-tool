@@ -38,6 +38,7 @@ import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
@@ -47,7 +48,7 @@ import java.util.UUID;
  */
 public class ForgetMeTool {
 
-    private static final Logger logger = LoggerFactory.getLogger(ForgetMeTool.class);
+    private static final Logger log = LoggerFactory.getLogger(ForgetMeTool.class);
 
     private static final String CMD_OPTION_CONFIG_DIR = "d";
     private static final String CMD_OPTION_CONFIG_CARBON_HOME = "carbon";
@@ -86,8 +87,7 @@ public class ForgetMeTool {
         if (cmd.hasOption(CMD_OPTION_CONFIG_DIR)) {
             homeDir = cmd.getOptionValue(CMD_OPTION_CONFIG_DIR);
         } else {
-            printError(options);
-            return;
+            homeDir = Paths.get(System.getProperty("user.dir")).getParent().toString();
         }
         UserIdentifier userIdentifier;
         if (cmd.hasOption(CMD_OPTION_CONFIG_USER_NAME)) {
@@ -126,7 +126,7 @@ public class ForgetMeTool {
         String result = optionValue;
         if (StringUtils.isEmpty(optionValue)) {
             result = UUID.randomUUID().toString();
-            logger.info("Generating pseudonym as pseudo name is not provided : " + result);
+            log.info("Generating pseudonym as pseudo name is not provided : " + result);
         }
         return result;
     }

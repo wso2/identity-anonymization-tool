@@ -36,6 +36,7 @@ import org.wso2.carbon.privacy.forgetme.sql.instructions.DatasourceProcessorConf
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainSeparatedSQLExecutionModule;
 
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -80,7 +81,7 @@ public class MainTest extends TestCase {
         DatasourceProcessorConfigReader reader = new DatasourceProcessorConfigReader();
         DatasourceProcessorConfig processorConfig = reader.readProcessorConfig(
                 Paths.get("components", "org.wso2.carbon.privacy.forgetme.sql", "src", "main", "resources", "conf",
-                        "datasources"));
+                        "datasources"), new HashMap<>());
         DataSourceConfig dataSourceConfig = processorConfig.getDataSourceConfig("WSO2_CARBON_DB");
 
         try {

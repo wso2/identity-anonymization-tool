@@ -45,7 +45,7 @@
                             <outputDirectory>${basedir}/target/conf</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/resources</directory>
+                                    <directory>src/main/resources/standalone</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>

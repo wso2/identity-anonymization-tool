@@ -24,6 +24,7 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 import org.wso2.carbon.privacy.forgetme.sql.exception.SQLModuleException;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Module config reader for Datasource elements.
@@ -36,7 +37,7 @@ public class DatasourceProcessorConfigReader implements ProcessorConfigReader<Da
     }
 
     @Override
-    public DatasourceProcessorConfig readProcessorConfig(Path path) throws SQLModuleException {
+    public DatasourceProcessorConfig readProcessorConfig(Path path, Map<String, String> properties) throws SQLModuleException {
 
         DataSourceManager dataSourceManager = DataSourceManager.getInstance();
 
@@ -46,8 +47,6 @@ public class DatasourceProcessorConfigReader implements ProcessorConfigReader<Da
             throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
 
-        DatasourceProcessorConfig datasourceProcessorConfig = new DatasourceProcessorConfig(dataSourceManager);
-
-        return datasourceProcessorConfig;
+        return new DatasourceProcessorConfig(dataSourceManager, properties);
     }
 }
