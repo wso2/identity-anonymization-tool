@@ -1,0 +1,3 @@
+UPDATE ACT_HI_IDENTITYLINK
+SET USER_ID_ = `pseudonym`
+WHERE USER_ID_ = `username`
