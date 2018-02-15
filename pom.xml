@@ -29,6 +29,13 @@
     <name>forget-me</name>
     <url>http://maven.apache.org</url>
 
+    <scm>
+        <url>https://github.com/wso2/identity-anonymization-tool.git</url>
+        <developerConnection>scm:git:https://github.com/wso2/identity-anonymization-tool.git</developerConnection>
+        <connection>scm:git:https://github.com/wso2/identity-anonymization-tool.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
     <modules>
         <module>components/org.wso2.carbon.privacy.forgetme.api</module>
         <module>components/org.wso2.carbon.privacy.forgetme.conf</module>
@@ -78,6 +85,16 @@
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${maven.resource.plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build.helper.plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${antrun.plugin.version}</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -102,6 +119,11 @@
             <dependency>
                 <groupId>org.wso2.carbon.privacy</groupId>
                 <artifactId>org.wso2.carbon.privacy.forgetme.sql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.privacy</groupId>
+                <artifactId>org.wso2.carbon.privacy.forgetme.logs</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -190,6 +212,8 @@
 
         <maven.surefire.plugin.version>2.18.1</maven.surefire.plugin.version>
         <maven.resource.plugin.version>3.0.2</maven.resource.plugin.version>
+        <build.helper.plugin.version>1.8</build.helper.plugin.version>
+        <antrun.plugin.version>1.7</antrun.plugin.version>
         <jacoco.version>0.7.9</jacoco.version>
 
         <org.junit.version>3.8.1</org.junit.version>
