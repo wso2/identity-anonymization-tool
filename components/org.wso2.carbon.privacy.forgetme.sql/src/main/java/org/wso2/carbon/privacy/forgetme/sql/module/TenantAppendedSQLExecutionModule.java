@@ -62,6 +62,11 @@ public class TenantAppendedSQLExecutionModule implements Module<UserSQLQuery> {
     @Override
     public void execute(UserSQLQuery userSQLQuery) throws ModuleException {
 
+        if (dataSource == null) {
+            log.warn("No data source configured for name: " + userSQLQuery.getSqlQuery().getBaseDirectory());
+            return;
+        }
+
         String username = userSQLQuery.getUserIdentifier().getUsername();
 
         // If this user belongs to a tenant we should append the tenant domain name to username in certain queries.

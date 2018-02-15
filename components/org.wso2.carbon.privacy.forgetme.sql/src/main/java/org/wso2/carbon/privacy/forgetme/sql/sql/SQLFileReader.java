@@ -29,15 +29,13 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Stream;
 
 /**
  * Utility class to read sql files in a given folder.
  */
 public class SQLFileReader {
-
-    private static final String TENANT_APPENDED_MODULE = "TenantAppendedSQLExecutionModule";
-    private static final String QUERY_TYPE_SEPARATOR = "=";
 
     private Path path;
 
@@ -90,23 +88,19 @@ public class SQLFileReader {
         if (!Files.isDirectory(basePath)) {
             throw new SQLReaderException("Invalid base path. Base path should be a directory.");
         }
+
         if (Files.exists(Paths.get(basePath.toString(), queryFileName + ".properties"))) {
-            // TODO: If condition after split check can be extended to support other module types.
-            String querytype;
             try {
-                querytype = new String(
-                        Files.readAllBytes(Paths.get(basePath.toString(), queryFileName + ".properties")));
+                Properties properties = new Properties();
+                properties.load(Files.newInputStream(Paths.get(basePath.toString(), queryFileName + ".properties")));
+                String type = properties.getProperty("type");
+                return SQLQueryType.valueOf(type);
             } catch (IOException e) {
                 throw new SQLReaderException("Error occurred while reading the SQL property files.", e);
             }
-            String[] type = querytype.split(QUERY_TYPE_SEPARATOR);
-            if (type != null && type.length != 0) {
-                if (TENANT_APPENDED_MODULE.equals(type[1].trim())) {
-                    return SQLQueryType.TENANT_APPENDED;
-                }
-            }
-            return SQLQueryType.DOMAIN_APPENDED;
         }
+
+        // If no properties file, we assume it is as a domain separated one.
         return SQLQueryType.DOMAIN_SEPARATED;
     }
 }

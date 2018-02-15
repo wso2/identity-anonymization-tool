@@ -176,7 +176,7 @@
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
 
-        <carbon.datasource.version>1.0.0</carbon.datasource.version>
+        <carbon.datasource.version>1.0.1</carbon.datasource.version>
         <com.h2database.wso2.version>1.2.140.wso2v3</com.h2database.wso2.version>
 
         <commons.lang.version>2.6</commons.lang.version>

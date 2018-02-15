@@ -29,7 +29,7 @@ public enum SQLQueryType {
     // SQL queries that has the domain name separate (In a different column) from the username.
     DOMAIN_SEPARATED,
 
-    //SQL queries that has tenant domain appended to the username.
+    // SQL queries that has tenant domain appended to the username.
     TENANT_APPENDED
 
 }
