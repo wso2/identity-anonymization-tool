@@ -47,6 +47,7 @@
         <module>components/org.wso2.carbon.privacy.forgetme.sql</module>
         <module>components/org.wso2.carbon.privacy.forgetme.logs</module>
         <module>components/org.wso2.carbon.privacy.forgetme.tool</module>
+        <module>components/org.wso2.carbon.privacy.forgetme.log-statements-scanner</module>
     </modules>
 
     <repositories>
