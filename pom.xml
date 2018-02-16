@@ -48,6 +48,7 @@
         <module>components/org.wso2.carbon.privacy.forgetme.logs</module>
         <module>components/org.wso2.carbon.privacy.forgetme.tool</module>
         <module>components/org.wso2.carbon.privacy.forgetme.log-statements-scanner</module>
+        <module>components/org.wso2.carbon.privacy.forgetme.analytics.streams</module>
     </modules>
 
     <repositories>
@@ -134,10 +135,14 @@
             </dependency>
             <dependency>
                 <groupId>org.wso2.carbon.privacy</groupId>
+                <artifactId>org.wso2.carbon.privacy.forgetme.analytics.streams</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.privacy</groupId>
                 <artifactId>org.wso2.carbon.privacy.forgetme.logs</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.wso2.carbon.datasources</groupId>
                 <artifactId>org.wso2.carbon.datasource.core</artifactId>

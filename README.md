@@ -18,4 +18,5 @@ cd target/dist/bin
 
 ## Components
 - [Log Statements Scanner Tool](components/org.wso2.carbon.privacy.forgetme.log-statements-scanner)
+- [Persisted Streams in DAS 3.1.0](components/org.wso2.carbon.privacy.forgetme.analytics.streams)
 
