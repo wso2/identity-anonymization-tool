@@ -31,10 +31,6 @@
             <groupId>org.wso2.carbon.privacy</groupId>
             <artifactId>org.wso2.carbon.privacy.forgetme.api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
