@@ -29,6 +29,7 @@ import org.wso2.carbon.privacy.forgetme.sql.instructions.DatasourceProcessorConf
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainAppendedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.Module;
 import org.wso2.carbon.privacy.forgetme.sql.module.TenantAppendedSQLExecutionModule;
+import org.wso2.carbon.privacy.forgetme.sql.module.TenantSpecificAppendedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLFileReader;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLQuery;
 import org.wso2.carbon.privacy.forgetme.sql.sql.UserSQLQuery;
@@ -102,6 +103,9 @@ public class MainTest extends TestCase {
                         break;
                     case DOMAIN_SEPARATED:
                         sqlExecutionModule = new DomainSeparatedSQLExecutionModule(dataSourceConfig);
+                        break;
+                    case TENANT_SPECIFIC_APPENDED:
+                        sqlExecutionModule = new TenantSpecificAppendedSQLExecutionModule(dataSourceConfig);
                         break;
                     case TENANT_APPENDED:
                         sqlExecutionModule = new TenantAppendedSQLExecutionModule(dataSourceConfig);

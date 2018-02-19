@@ -34,6 +34,7 @@ import org.wso2.carbon.privacy.forgetme.sql.module.DomainAppendedSQLExecutionMod
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainSeparatedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.Module;
 import org.wso2.carbon.privacy.forgetme.sql.module.TenantAppendedSQLExecutionModule;
+import org.wso2.carbon.privacy.forgetme.sql.module.TenantSpecificAppendedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLFileReader;
 import org.wso2.carbon.privacy.forgetme.sql.sql.SQLQuery;
 import org.wso2.carbon.privacy.forgetme.sql.sql.UserSQLQuery;
@@ -88,6 +89,9 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
                         break;
                     case DOMAIN_SEPARATED:
                         sqlExecutionModule = new DomainSeparatedSQLExecutionModule(dataSourceConfig);
+                        break;
+                    case TENANT_SPECIFIC_APPENDED:
+                        sqlExecutionModule = new TenantSpecificAppendedSQLExecutionModule(dataSourceConfig);
                         break;
                     case TENANT_APPENDED:
                         sqlExecutionModule = new TenantAppendedSQLExecutionModule(dataSourceConfig);
