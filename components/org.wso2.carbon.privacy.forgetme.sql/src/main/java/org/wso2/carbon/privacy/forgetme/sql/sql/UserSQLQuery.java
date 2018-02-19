@@ -45,6 +45,12 @@ public class UserSQLQuery {
         this.sqlQuery = sqlQuery;
     }
 
+    /**
+     * Returns number of occurrences of the give string in the SQL query. Can be used to get the amount if there are
+     * multiple place holders with the same name.
+     * @param substring String to be searched on the SQL query.
+     * @return Number of occurrences.
+     */
     public int getNumberOfPlacesToReplace(String substring) {
         return StringUtils.countMatches(sqlQuery.getSqlQuery(), substring);
     }

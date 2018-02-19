@@ -48,14 +48,13 @@ import java.util.regex.Pattern;
 
 /**
  * Log Processor to process Log Files.
- *
  */
 public class LogFileProcessor {
 
+    private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
+
     private final static Charset ENCODING = StandardCharsets.UTF_8;
     private static final String TEMP_FILE_PREFIX = ".temp.txt";
-
-    private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
 
     public void processFiles(UserIdentifier userIdentifier, ReportAppender reportAppender,
                              List<Patterns.Pattern> patternList, List<File> fileList) throws LogProcessorException {
@@ -64,34 +63,32 @@ public class LogFileProcessor {
         List<MatchAndReplace> compiledPatterns = compile(patternList, templatePatternData);
         for (File file : fileList) {
             reportAppender.appendSection("Starting File %s", file.getAbsolutePath());
+
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
                     BufferedWriter writer = new BufferedWriter(
                             new FileWriter(file.toPath().toString() + TEMP_FILE_PREFIX))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
-
                     String replacement = line;
                     boolean patternMatched = false;
 
                     // Check the line for any detectPattern matches.
                     for (MatchAndReplace matchAndReplace : compiledPatterns) {
-
                         Matcher matcher = matchAndReplace.getPattern().matcher(replacement);
-
                         if (matcher.find()) {
+
                             // Pattern match hit.
                             patternMatched = true;
                             String formattedReplacePattern = StrSubstitutor
                                     .replace(matchAndReplace.getReplacePattern(), templatePatternData);
 
-                            /* Here, if the replacePattern is not empty replace the username occurrences in the
-                            line. If it is empty, it indicates that a possible match is found in the current line. */
+                            // Here, if the replacePattern is not empty replace the username occurrences in the
+                            // line. If it is empty, it indicates that a possible match is found in the current line.
                             if (StringUtils.isNotBlank(formattedReplacePattern)) {
                                 replacement = replacement
                                         .replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
                                 reportAppender.append("Replaced, %d, %b", lineReader.getLineNumber(), true);
-
                             } else {
                                 reportAppender.append("Not Replaced, %d, %b", lineReader.getLineNumber(), true);
                             }
@@ -99,13 +96,13 @@ public class LogFileProcessor {
                     }
                     if (patternMatched) {
                         writer.write(replacement + '\n');
-
                     } else {
                         writer.write(line + '\n');
                     }
                 }
             } catch (IOException ex) {
                 log.error("Error occurred while file read/write operation.", ex);
+                throw new LogProcessorException(ex);
             }
             reportAppender.appendSectionEnd("Completed " + file);
         }
@@ -152,7 +149,7 @@ public class LogFileProcessor {
      * Get actual data for configured templates in the regexes. E.g. ${username} in regex will be replaced with the
      * actual username.
      *
-     * @param userIdentifier
+     * @param userIdentifier User to be replaced.
      * @return Map of templates and their corresponding values.
      */
     private Map<String, String> getTemplatePatternData(UserIdentifier userIdentifier) {
@@ -186,12 +183,10 @@ public class LogFileProcessor {
         }
 
         public Pattern getPattern() {
-
             return pattern;
         }
 
         public String getReplacePattern() {
-
             return replacePattern;
         }
     }

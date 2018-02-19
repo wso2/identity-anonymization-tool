@@ -25,7 +25,7 @@ import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 import java.util.Map;
 
 /**
- * Module config for datasources.
+ * Module config for data sources.
  *
  */
 public class DatasourceProcessorConfig implements ProcessorConfig {

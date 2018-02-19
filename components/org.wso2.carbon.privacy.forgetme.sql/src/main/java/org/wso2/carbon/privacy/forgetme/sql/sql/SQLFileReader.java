@@ -18,6 +18,8 @@
 
 package org.wso2.carbon.privacy.forgetme.sql.sql;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wso2.carbon.privacy.forgetme.sql.exception.SQLReaderException;
 import org.wso2.carbon.privacy.forgetme.sql.util.LambdaExceptionUtils;
 
@@ -36,6 +38,10 @@ import java.util.stream.Stream;
  * Utility class to read sql files in a given folder.
  */
 public class SQLFileReader {
+
+    private static final Logger log = LoggerFactory.getLogger(SQLFileReader.class);
+
+    private static final String PROPERTIES_EXTENSION = ".properties";
 
     private Path path;
 
@@ -65,6 +71,9 @@ public class SQLFileReader {
                     sqlQuery.setSqlQueryType(
                             getQueryTypeForSQLQuery(paths.getFileName().toString(), paths.getParent()));
                     sqlQueries.add(sqlQuery);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Following SQL query read from the file: {}", sqlQuery);
+                    }
                 }
             }));
         } catch (IOException e) {
@@ -89,11 +98,15 @@ public class SQLFileReader {
             throw new SQLReaderException("Invalid base path. Base path should be a directory.");
         }
 
-        if (Files.exists(Paths.get(basePath.toString(), queryFileName + ".properties"))) {
+        if (Files.exists(Paths.get(basePath.toString(), queryFileName + PROPERTIES_EXTENSION))) {
             try {
                 Properties properties = new Properties();
-                properties.load(Files.newInputStream(Paths.get(basePath.toString(), queryFileName + ".properties")));
+                properties.load(Files.newInputStream(Paths.get(basePath.toString(), queryFileName +
+                        PROPERTIES_EXTENSION)));
                 String type = properties.getProperty("type");
+                if (log.isDebugEnabled()) {
+                    log.debug("Properties file found for {} and type is {}", queryFileName, type);
+                }
                 return SQLQueryType.valueOf(type);
             } catch (IOException e) {
                 throw new SQLReaderException("Error occurred while reading the SQL property files.", e);
