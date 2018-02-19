@@ -21,9 +21,14 @@ package org.wso2.carbon.privacy.forgetme.sql.module;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 
 /**
- * Abstract processor to execute tasks.
+ * Abstract module to execute tasks.
  */
 public interface Module<T> {
 
+    /**
+     * Instruction will call this method as per available number of instructions.
+     * @param t Properties that needs to pass to this method in type T.
+     * @throws ModuleException Error while executing module.
+     */
     void execute(T t) throws ModuleException;
 }

@@ -31,7 +31,7 @@ import javax.sql.DataSource;
  */
 public class DataSourceConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(DataSourceConfig.class);
+    private static final Logger log = LoggerFactory.getLogger(DataSourceConfig.class);
 
     private String dataSourceName;
     private DataSourceManager dataSourceManager;
@@ -39,8 +39,8 @@ public class DataSourceConfig {
     /**
      * Constructs the config with given datasource name and the given datasource manager.
      *
-     * @param dataSourceName
-     * @param dataSourceManager
+     * @param dataSourceName Name of the data source.
+     * @param dataSourceManager Data source manager instance.
      */
     public DataSourceConfig(String dataSourceName, DataSourceManager dataSourceManager) {
         
@@ -51,8 +51,8 @@ public class DataSourceConfig {
     /**
      * Returns the datasource for the given configuration, given by current datasource name.
      *
-     * @return
-     * @throws SQLModuleException
+     * @return Instance of Datasource.
+     * @throws SQLModuleException Error while finding the datasource.
      */
     public DataSource getDatasource() throws SQLModuleException {
         
@@ -62,7 +62,7 @@ public class DataSourceConfig {
             if (carbonDataSource != null) {
                 return (DataSource) carbonDataSource.getDataSourceObject();
             } else {
-                logger.error("Could not find a datasource for the name : " + dataSourceName);
+                log.error("Could not find a datasource for the name : " + dataSourceName);
             }
         } else {
             throw new SQLModuleException("Datasource manager is not initialized.");

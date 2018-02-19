@@ -45,22 +45,18 @@ public class SQLQuery {
     }
 
     public SQLQueryType getSqlQueryType() {
-
         return sqlQueryType;
     }
 
     public void setSqlQueryType(SQLQueryType sqlQueryType) {
-
         this.sqlQueryType = sqlQueryType;
     }
 
     public String getBaseDirectory() {
-
         return baseDirectory;
     }
 
     public void setBaseDirectory(String baseDirectory) {
-
         this.baseDirectory = baseDirectory;
     }
 }

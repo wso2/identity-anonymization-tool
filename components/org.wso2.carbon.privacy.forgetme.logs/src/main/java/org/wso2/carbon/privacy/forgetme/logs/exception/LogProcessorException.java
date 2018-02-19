@@ -29,6 +29,10 @@ public class LogProcessorException extends InstructionExecutionException {
         super(message);
     }
 
+    public LogProcessorException(Throwable throwable) {
+        super(throwable);
+    }
+
     public LogProcessorException(String message, Throwable throwable) {
         super(message, throwable);
     }

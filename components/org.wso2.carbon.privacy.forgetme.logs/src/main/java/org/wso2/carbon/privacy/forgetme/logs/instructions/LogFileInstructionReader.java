@@ -46,7 +46,7 @@ import javax.xml.bind.Unmarshaller;
  */
 public class LogFileInstructionReader implements InstructionReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(LogFileInstructionReader.class);
+    private static final Logger log = LoggerFactory.getLogger(LogFileInstructionReader.class);
 
     private static final String NAME = "log-file";
     private static final String LOG_FILE_PATH_PROPERTY = "log-file-path";
@@ -69,7 +69,8 @@ public class LogFileInstructionReader implements InstructionReader {
 
         List<File> logFiles = listMatchingLogFiles(patternDir, properties);
 
-        return logFiles.stream().map((logFile) -> new LogFileInstruction(patternList, logFile))
+        return logFiles.stream()
+                .map((logFile) -> new LogFileInstruction(patternList, logFile))
                 .collect(Collectors.toList());
     }
 
@@ -77,13 +78,14 @@ public class LogFileInstructionReader implements InstructionReader {
 
         List<Patterns.Pattern> patternList = new ArrayList<>();
 
-        for (int i = 0; i < patternFiles.length; i++) {
-            File file = patternFiles[i];
-            try {
-                Patterns patterns = readXML(file);
-                patternList.addAll(patterns.getPattern());
-            } catch (LogProcessorException e) {
-                throw new ModuleException("Could not read the file : " + file, e);
+        if (patternFiles != null) {
+            for (File file : patternFiles) {
+                try {
+                    Patterns patterns = readXML(file);
+                    patternList.addAll(patterns.getPattern());
+                } catch (LogProcessorException e) {
+                    throw new ModuleException("Could not read the file : " + file, e);
+                }
             }
         }
         return patternList;
@@ -92,10 +94,10 @@ public class LogFileInstructionReader implements InstructionReader {
     /**
      * Lists the matching log files in the directory.
      *
-     * @param patternDir
-     * @param properties
-     * @return
-     * @throws ModuleException
+     * @param patternDir Directory of the patterns file.
+     * @param properties Log files related properties.
+     * @return List of matching log files.
+     * @throws ModuleException Error while listing matching log files.
      */
     private List<File> listMatchingLogFiles(Path patternDir, Properties properties) throws ModuleException {
 
@@ -128,12 +130,12 @@ public class LogFileInstructionReader implements InstructionReader {
      *
      * @param xmlFile The config file.
      * @return Patterns object.
-     * @throws LogProcessorException
+     * @throws LogProcessorException Error while reading the xml file.
      */
     private Patterns readXML(File xmlFile) throws LogProcessorException {
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("Reading pattern configuration file at : " + xmlFile);
+        if (log.isDebugEnabled()) {
+            log.debug("Reading pattern configuration file at : " + xmlFile);
         }
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Patterns.class);
@@ -143,8 +145,8 @@ public class LogFileInstructionReader implements InstructionReader {
 
             Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Read pattern configuration file success : " + xmlFile);
+            if (log.isDebugEnabled()) {
+                log.debug("Read pattern configuration file success : " + xmlFile);
             }
             return patterns;
         } catch (JAXBException ex) {
