@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2018, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+  ~
+  ~ WSO2 Inc. licenses this file to you under the Apache License,
+  ~ Version 2.0 (the "License"); you may not use this file except
+  ~ in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied. See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<!--<!DOCTYPE assembly [
+        <!ELEMENT assembly (formats|includeBaseDirectory|fileSets|dependencySets|files)*>
+        <!ELEMENT formats (format)*>
+        <!ELEMENT format (#PCDATA)>
+        <!ELEMENT includeBaseDirectory (#PCDATA)>
+        <!ELEMENT fileSets (fileSet)*>
+        <!ELEMENT fileSet (directory|outputDirectory|excludes|includes|fileMode)*>
+        <!ELEMENT directory (#PCDATA)>
+        <!ELEMENT outputDirectory (#PCDATA)>
+        <!ELEMENT excludes (exclude)*>
+        <!ELEMENT exclude (#PCDATA)>
+        <!ELEMENT includes (include)*>
+        <!ELEMENT include (#PCDATA)>
+        <!ELEMENT fileMode (#PCDATA)>
+        <!ELEMENT dependencySets (dependencySet)*>
+        <!ELEMENT dependencySet (outputDirectory|includes|outputFileNameMapping)*>
+        <!ELEMENT outputFileNameMapping (#PCDATA)>
+        <!ELEMENT files (file)*>
+        <!ELEMENT file (source|outputDirectory|fileMode|destName|filtered)*>
+        <!ELEMENT source (#PCDATA)>
+        <!ELEMENT destName (#PCDATA)>
+        <!ELEMENT filtered (#PCDATA)>
+        ]>-->
+<assembly>
+    <id>identity-anonymization-bin</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/carbon-4.4.x</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf</outputDirectory>
+        </fileSet>
+
+        <fileSet>
+            <directory>target/dist</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}</outputDirectory>
+        </fileSet>
+
+        <!-- EI related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/datasources</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/log-config</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+
+        <!--IS related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/datasources
+            </directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/log-config
+            </directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+
+        <!--APIM related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/datasources</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/log-config</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+
+        <!--IOT related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/datasources</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/log-config</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+    </fileSets>
+
+</assembly>
