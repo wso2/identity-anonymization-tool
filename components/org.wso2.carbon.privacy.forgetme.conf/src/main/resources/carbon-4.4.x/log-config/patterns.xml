@@ -49,13 +49,8 @@
     </pattern>
 
     <pattern key="pattern6">
-        <detectPattern>(.)*User,(.)*${username}@${tenantDomain}(.)*is(\s)not(\s)exist(\s)in(.)*${userstoreDomain}(.)*</detectPattern>
+        <detectPattern>(.)*(CarbonAuthenticationUtil)(.)*${username}@${tenantDomain}(.)*</detectPattern>
         <replacePattern>${username}</replacePattern>
-    </pattern>
-
-    <pattern key="pattern6">
-        <detectPattern>(.)*${username}(.)*</detectPattern>
-        <replacePattern></replacePattern>
     </pattern>
 
 </patterns>
