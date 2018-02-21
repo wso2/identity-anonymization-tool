@@ -1,0 +1,45 @@
+{
+  "processors" : [
+    "log-file",
+    "rdbms",
+    "apim-datasources"
+  ],
+  "directories": [
+    {
+      "dir": "log-config",
+      "type": "log-file",
+      "processor" : "log-file",
+      "log-file-path" : "logs",
+      "log-file-name-regex" : "(.)*"
+    },
+    {
+      "dir": "sql",
+      "type": "rdbms",
+      "processor" : "rdbms"
+    },
+    {
+      "dir": "",
+      "type": "apim-datasources",
+      "processor" : "apim-datasources"
+    }
+  ],
+  "extensions": [
+    {
+      "dir": "datasources",
+      "type": "datasource",
+      "processor" : "rdbms",
+      "properties" : [
+        {
+        "identity": "WSO2AM_DB",
+        "apim": "WSO2AM_DB",
+        "um": "WSO2_CARBON_DB"
+        }
+      ]
+    },
+    {
+      "dir": "datasources",
+      "type": "datasource",
+      "processor" : "apim-datasources"
+    }
+  ]
+}

@@ -69,6 +69,10 @@
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+        </fileSet>
 
         <!--IS related configs -->
         <fileSet>
@@ -85,6 +89,10 @@
             </directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+        </fileSet>
 
         <!--APIM related configs -->
         <fileSet>
@@ -99,6 +107,10 @@
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+        </fileSet>
 
         <!--IOT related configs -->
         <fileSet>
@@ -112,6 +124,10 @@
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
         </fileSet>
     </fileSets>
 
