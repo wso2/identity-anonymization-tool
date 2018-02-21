@@ -33,6 +33,18 @@ public enum SQLQueryType {
     TENANT_SPECIFIC_APPENDED,
 
     // SQL queries that has tenant domain appended to the username.
-    TENANT_APPENDED
+    TENANT_APPENDED,
+
+    // SQL Queries that require specific customized logic to perform an update in AM_APPLICATION_REGISTRATION Table
+    AM_APPLICATION_REGISTRATION_UPDATE,
+
+    // SQL Queries that require specific customized logic to perform an update in IDN_OAUTH_CONSUMER_APPS Table
+    IDN_OAUTH_CONSUMER_APPS_UPDATE,
+
+    // SQL Queries that require specific customized logic to perform an update in SP_APP Table
+    SP_APP_UPDATE,
+
+    //SQL update query which should be proceeded by a corresponding select query
+    SELECT_PROCEEDED_UPDATE
 
 }
