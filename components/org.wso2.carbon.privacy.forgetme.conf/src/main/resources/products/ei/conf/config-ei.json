@@ -1,0 +1,19 @@
+{
+  "processors" : [
+    "rdbms"
+  ],
+  "directories": [
+    {
+      "dir": "sql",
+      "type": "rdbms",
+      "processor" : "rdbms"
+    }
+  ],
+  "extensions": [
+    {
+      "dir": "datasources",
+      "type": "datasource",
+      "processor" : "rdbms"
+    }
+  ]
+}
