@@ -1,0 +1,20 @@
+{
+  "processors" : [
+    "log-file",
+    "analytics-streams"
+  ],
+  "directories": [
+    {
+      "dir": "log-config",
+      "type": "log-file",
+      "processor" : "log-file",
+      "log-file-path" : "logs",
+      "log-file-name-regex" : "(.)*"
+    },
+    {
+      "dir": "streams",
+      "type": "analytics-streams",
+      "processor" : "analytics-streams"
+    }
+  ]
+}

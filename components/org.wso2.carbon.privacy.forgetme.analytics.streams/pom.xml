@@ -30,6 +30,7 @@
 
     <artifactId>org.wso2.carbon.privacy.forgetme.analytics.streams</artifactId>
     <name>[GDPR] Forget Me - Analytics Streams Module</name>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -39,10 +40,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.privacy</groupId>
@@ -52,16 +55,19 @@
             <groupId>org.wso2.carbon.analytics</groupId>
             <artifactId>org.wso2.carbon.analytics.dataservice.core</artifactId>
             <version>${carbon.analytics.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.analytics</groupId>
             <artifactId>org.wso2.carbon.analytics.datasource.rdbms</artifactId>
             <version>${carbon.analytics.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.core</artifactId>
             <version>${carbon.kernel.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
@@ -72,16 +78,19 @@
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.ndatasource.core</artifactId>
             <version>${carbon.kernel.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.ndatasource.rdbms</artifactId>
             <version>${carbon.kernel.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
