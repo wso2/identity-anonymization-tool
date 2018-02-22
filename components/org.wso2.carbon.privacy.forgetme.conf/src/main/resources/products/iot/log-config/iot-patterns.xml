@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  ~  Copyright (c) 2018, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+  ~
+  ~  WSO2 Inc. licenses this file to you under the Apache License,
+  ~  Version 2.0 (the "License"); you may not use this file except
+  ~  in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+
+-->
+<patterns xmlns="patterns.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="patterns.xsd">
+
+    <pattern key="pattern1">
+        <detectPattern>(.)*(OperationManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern2">
+        <detectPattern>(.)*(DeviceManagementProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern3">
+        <detectPattern>(.)*(GroupManagementProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern4">
+        <detectPattern>(.)*(NotificationManagementServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern5">
+        <detectPattern>(.)*(GeoLocationProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern6">
+        <detectPattern>(.)*(DeviceInformationManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern7">
+        <detectPattern>(.)*(DeviceAccessAuthorizationServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern8">
+        <detectPattern>(.)*(ApplicationManagerProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern9">
+        <detectPattern>(.)*(ActivityProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern10">
+        <detectPattern>(.)*(DeviceAgentServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern11">
+        <detectPattern>(.)*(DeviceManagementServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern12">
+        <detectPattern>(.)*(GeoLocationBasedServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern13">
+        <detectPattern>(.)*(PolicyManagementServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern14">
+        <detectPattern>(.)*(UserManagementServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern15">
+        <detectPattern>(.)*(UserManagementAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern16">
+        <detectPattern>(.)*(DeviceManagementAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern17">
+        <detectPattern>(.)*(DeviceAnalyticsArtifactUploaderAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern18">
+        <detectPattern>(.)*(DeviceAccessAuthorizationAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern19">
+        <detectPattern>(.)*(ApplicationManagementAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern20">
+        <detectPattern>(.)*(SCEPManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern21">
+        <detectPattern>(.)*(CertificateManagementAdminServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern22">
+        <detectPattern>(.)*(APIManagementProviderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern23">
+        <detectPattern>(.)*(EmailSenderServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern24">
+        <detectPattern>(.)*(JWTClient)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern25">
+        <detectPattern>(.)*(PolicyManagerServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern26">
+        <detectPattern>(.)*(MonitoringManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern27">
+        <detectPattern>(.)*(PolicyManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern28">
+        <detectPattern>(.)*(ComplianceDecisionPointImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern29">
+        <detectPattern>(.)*(PolicyEnforcementDelegatorImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern30">
+        <detectPattern>(.)*(PolicyCacheManagerImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern31">
+        <detectPattern>(.)*(EventReceiverServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern32">
+        <detectPattern>(.)*(WindowsPolicyMonitoringManager)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern33">
+        <detectPattern>(.)*(EnrollmentServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern34">
+        <detectPattern>(.)*(OperationManagementServiceImpl)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="pattern35">
+        <detectPattern>(.)*(TokenPersistence)(.)*${username}(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+    
+</patterns>

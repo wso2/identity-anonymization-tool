@@ -121,7 +121,7 @@ public class ForgetMeExecutionEngine {
             List<ForgetMeInstruction> instructions = getInstructions(processorName, systemEnv);
             ProcessorConfig processorConfig = systemConfig.getProcessorConfigMap().get(processorName);
             ProcessorPipeline processorPipeline = new ProcessorPipeline(systemConfig.getWorkDir(), processorName,
-                    userIdentifier, processorConfig, instructions);
+                    userIdentifier, processorConfig, instructions, systemEnv);
             ExecutorService executorService = executors.get(processorName);
             Future<ForgetMeResult> future = executorService.submit(processorPipeline);
             submittedJobs.add(future);
@@ -192,15 +192,17 @@ public class ForgetMeExecutionEngine {
         private UserIdentifier userIdentifier;
         private String name;
         private Path workDir;
+        private Environment environment;
 
         public ProcessorPipeline(Path workDir, String name, UserIdentifier userIdentifier,
-                ProcessorConfig processorConfig, List<ForgetMeInstruction> instructionList) {
+                ProcessorConfig processorConfig, List<ForgetMeInstruction> instructionList, Environment environment) {
 
             this.workDir = workDir;
             this.name = name;
             this.userIdentifier = userIdentifier;
             this.processorConfig = processorConfig;
             this.instructionList = instructionList;
+            this.environment = environment;
         }
 
         @Override
@@ -211,7 +213,6 @@ public class ForgetMeExecutionEngine {
                     name)) {
                 defaultReportAppender.open();
                 ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
-                Environment environment = new SystemEnv();
                 for (ForgetMeInstruction instruction : instructionList) {
                     instruction.execute(userIdentifier, processorConfig, environment, defaultReportAppender);
                 }

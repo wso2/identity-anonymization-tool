@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  ~  Copyright (c) 2018, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+  ~
+  ~  WSO2 Inc. licenses this file to you under the Apache License,
+  ~  Version 2.0 (the "License"); you may not use this file except
+  ~  in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+
+-->
+<patterns xmlns="patterns.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="patterns.xsd">
+
+    <pattern key="product-sp-1">
+        <detectPattern>(.)*eventListSize=(.)* eventList (.)* for username ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-1">
+        <detectPattern>(.)*Connected with user : " + session.getId()</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-2">
+        <detectPattern>(.)*Authentication failure for user '${username}' when accessing uri (.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-3">
+        <detectPattern>(.)*Unauthorized for user : ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-4">
+        <detectPattern>(.)*Unauthorized to perform (.)* for user : ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-5">
+        <detectPattern>(.)*Unauthorized  to perform get dashboard configurations for user : ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-1">
+        <detectPattern>(.)*user ${username} connected</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-2">
+        <detectPattern>(.)*user ${username} disconnected</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-3">
+        <detectPattern>(.)*Checking permission with ID (.)* for the username ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-4">
+        <detectPattern>(.)*User with username '${username}' is not present when retrieving user roles.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-5">
+        <detectPattern>(.)*User '${username}' session is extended.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-6">
+        <detectPattern>(.)*Password did not match with the configured user, userName: '${username}'(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-7">
+        <detectPattern>(.)*User '${username}' is logged in.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-8">
+        <detectPattern>(.)*User not found for userName: '${username}'. Failing the authentication.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-9">
+        <detectPattern>(.)*User '${username}' session is refreshed.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-10">
+        <detectPattern>(.)*Retrieving all roles for getting role id of the roles of the user '${username}'.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-11">
+        <detectPattern>(.)*Retrieving user roles by retrieving user '${usernmae}'.</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-12">
+        <detectPattern>(.)*Authentication failed for username '${username}'(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+</patterns>
