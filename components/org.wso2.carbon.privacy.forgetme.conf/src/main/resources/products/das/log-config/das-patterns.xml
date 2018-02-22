@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+  ~  Copyright (c) 2018, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+  ~
+  ~  WSO2 Inc. licenses this file to you under the Apache License,
+  ~  Version 2.0 (the "License"); you may not use this file except
+  ~  in compliance with the License.
+  ~  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~  Unless required by applicable law or agreed to in writing,
+  ~  software distributed under the License is distributed on an
+  ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~  KIND, either express or implied.  See the License for the
+  ~  specific language governing permissions and limitations
+  ~  under the License.
+
+-->
+<patterns xmlns="patterns.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="patterns.xsd">
+
+    <pattern key="product-das-1">
+        <detectPattern>(.)*login as ${username}:Tenant</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="product-das-2">
+        <detectPattern>(.)*login as ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+    
+    <pattern key="carbon-dashboards-1">
+        <detectPattern>(.)*a user logged out from the portal username: ${username}, domain:${userstoreDomain}</detectPattern>
+        <replacePattern></replacePattern>
+    </pattern>
+
+    <pattern key="carbon-dashboards-2">
+        <detectPattern>(.)*a user logged into the portal username: ${username}, domain:${userDomain}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-1">
+        <detectPattern>(.)*Granted analytics permission for user[${username}] :(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-2">
+        <detectPattern>(.)*User[${username}] calling method(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-1">
+        <detectPattern>(.)*user ${username} connected</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-2">
+        <detectPattern>(.)*user ${username} disconnected</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-3">
+        <detectPattern>(.)*Error while checking the authorization of the user${username}. (.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-analytics-common-4">
+        <detectPattern>(.)*Cannot connect to the server at (.)*, for user: ${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-ml-1">
+        <detectPattern>(.)*[Deleted] [analysis id] (.)* of [user] ${username} of [tenant] ${tenantDomain}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-ml-2">
+        <detectPattern>(.)*[Deleted] [dataset] (.)* of [user] ${username} of [tenant] ${tenantDomain}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-ml-3">
+        <detectPattern>(.)*[Deleted] [dataset version] (.)* of [user] ${username} of [tenant] ${tenantDomain}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-ml-4">
+        <detectPattern>(.)*[Deleted] [project] (.)* of [user] ${username} of [tenant] ${tenantDomain}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
+    <pattern key="carbon-ml-5">
+        <detectPattern>(.)*Session check for${username}</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+</patterns>
