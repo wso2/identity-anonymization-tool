@@ -42,6 +42,10 @@
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon.privacy</groupId>
+            <artifactId>org.wso2.carbon.privacy.forgetme.analytics.streams</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.privacy</groupId>
             <artifactId>org.wso2.carbon.privacy.forgetme.api</artifactId>
         </dependency>
         <dependency>
