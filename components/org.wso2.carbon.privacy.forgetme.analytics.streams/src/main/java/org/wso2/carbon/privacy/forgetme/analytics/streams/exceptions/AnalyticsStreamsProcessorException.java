@@ -24,6 +24,7 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionExecutionExceptio
  * Analytics streams processor generic exception.
  */
 public class AnalyticsStreamsProcessorException extends InstructionExecutionException {
+
     public AnalyticsStreamsProcessorException(String message) {
         super(message);
     }

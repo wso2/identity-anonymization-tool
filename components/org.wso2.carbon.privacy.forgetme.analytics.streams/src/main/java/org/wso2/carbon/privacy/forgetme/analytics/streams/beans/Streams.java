@@ -24,6 +24,7 @@ import java.util.List;
  * Streams file object model.
  */
 public class Streams {
+
     private List<Stream> streams;
 
     public List<Stream> getStreams() {

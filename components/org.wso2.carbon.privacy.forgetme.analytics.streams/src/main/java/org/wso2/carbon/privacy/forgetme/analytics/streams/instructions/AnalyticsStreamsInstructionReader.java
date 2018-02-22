@@ -42,7 +42,7 @@ import java.util.Properties;
  */
 public class AnalyticsStreamsInstructionReader implements InstructionReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnalyticsStreamsInstructionReader.class);
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsStreamsInstructionReader.class);
 
     /**
      * Check if the file is a JSON file.
@@ -90,7 +90,7 @@ public class AnalyticsStreamsInstructionReader implements InstructionReader {
                 Streams streamCollection = readStreamDefinitionFile(streamFile);
                 streams.addAll(streamCollection.getStreams());
             } catch (AnalyticsStreamsProcessorException e) {
-                logger.error("Error in parsing the stream definition. Ignoring and passing to next file...", e);
+                log.error("Error in parsing the stream definition. Ignoring and passing to next file...", e);
             }
         }
         return streams;
@@ -104,11 +104,8 @@ public class AnalyticsStreamsInstructionReader implements InstructionReader {
      * @throws AnalyticsStreamsProcessorException
      */
     private Streams readStreamDefinitionFile(File streamFile) throws AnalyticsStreamsProcessorException {
-        try {
-            FileReader fileReader = new FileReader(streamFile);
-            Streams streams = new Gson().fromJson(fileReader, Streams.class);
-            fileReader.close();
-            return streams;
+        try (FileReader fileReader = new FileReader(streamFile)) {
+             return new Gson().fromJson(fileReader, Streams.class);
         } catch (IOException e) {
             throw new AnalyticsStreamsProcessorException("Error in reading stream definition: " +
                     streamFile.getName(), e);

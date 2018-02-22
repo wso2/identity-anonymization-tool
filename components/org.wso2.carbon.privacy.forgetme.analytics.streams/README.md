@@ -1,10 +1,10 @@
 # Persisted Strams in DAS 3.1.0
 
-This component can be used to anonymize PIIs in Persisted streams in WSO2 Data Analytics Server 3.1.0.
+This component can be used to anonymize PII in Persisted streams in WSO2 Data Analytics Server 3.1.0.
 
 ## How to Run?
 
-* Users need to define the streams and each attribute which contains PIIs in tool's extension configuration directory. 
+* Users need to define the streams and each attribute which contains PII in tool's extension configuration directory. 
 
 ##### streams.json
 
@@ -25,7 +25,7 @@ This component can be used to anonymize PIIs in Persisted streams in WSO2 Data A
 }
 ````
 - **streamName**: Name of the stream
-- **attributes**: List of attributes which contains PIIs
+- **attributes**: List of attributes which contains PII
 - **id**: ID attribute which needs to be replaced by the value of pseudonym argument when executing the tool
 
 * Then the `analytics-stream` processor needs to be added into the tool's configuration file.

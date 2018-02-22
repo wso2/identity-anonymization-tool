@@ -43,7 +43,7 @@ import java.util.Objects;
  */
 public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
 
-    private static final Logger logger = LoggerFactory.getLogger(AnalyticsStreamsInstruction.class);
+    private static final Logger log = LoggerFactory.getLogger(AnalyticsStreamsInstruction.class);
 
     private static final String CARBON_HOME = "CARBON_HOME";
     private static final String CUSTOM_CONF_DIR_NAME = "wso2_custom_conf_dir";
@@ -138,7 +138,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
                 }
             }
         } catch (AnalyticsException e) {
-            logger.error("Error occurred while filtering record set.", e);
+            log.error("Error occurred while filtering record set.", e);
         }
     }
 
