@@ -129,6 +129,46 @@
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
         </fileSet>
+
+        <!--DAS related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/datasources</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/log-config</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/streams</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/streams</outputDirectory>
+        </fileSet>
+
+        <!--SP related configs -->
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/datasources</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/sql</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/log-config</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/conf/</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+        </fileSet>
     </fileSets>
 
 </assembly>
