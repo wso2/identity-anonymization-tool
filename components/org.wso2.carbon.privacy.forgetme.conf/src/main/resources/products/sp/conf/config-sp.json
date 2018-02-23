@@ -1,0 +1,14 @@
+{
+  "processors" : [
+    "log-file"
+  ],
+  "directories": [
+    {
+      "dir": "log-config",
+      "type": "log-file",
+      "processor" : "log-file",
+      "log-file-path" : "logs",
+      "log-file-name-regex" : "(.)*"
+    }
+  ]
+}
