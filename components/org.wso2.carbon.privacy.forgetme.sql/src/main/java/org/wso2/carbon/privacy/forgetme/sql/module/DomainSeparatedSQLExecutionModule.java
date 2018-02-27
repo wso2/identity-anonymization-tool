@@ -39,7 +39,6 @@ public class DomainSeparatedSQLExecutionModule implements Module<UserSQLQuery> {
 
     private static final String USERNAME = "username";
     private static final String TENANT_ID = "tenant_id";
-    private static final String TENANT_DOMAIN = "tenant_domain";
     private static final String USER_STORE_DOMAIN = "user_store_domain";
     private static final String PSEUDONYM = "pseudonym";
 

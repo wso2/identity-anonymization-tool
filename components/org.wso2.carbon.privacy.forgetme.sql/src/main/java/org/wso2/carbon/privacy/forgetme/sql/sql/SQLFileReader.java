@@ -29,8 +29,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -59,9 +59,9 @@ public class SQLFileReader {
      * @return List of {{@link SQLQuery}.
      * @throws SQLReaderException Error while reading the files.
      */
-    public List<SQLQuery> readAllQueries() throws SQLReaderException {
+    public Map<String, SQLQuery> readAllQueries() throws SQLReaderException {
 
-        List<SQLQuery> sqlQueries = new ArrayList<>();
+        Map<String, SQLQuery> sqlQueries = new HashMap<>();
         try (Stream<Path> pathStream = Files.walk(path)) {
             pathStream.forEach(LambdaExceptionUtils.rethrowConsumer(paths -> {
                 PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:*.sql");
@@ -70,7 +70,9 @@ public class SQLFileReader {
                     sqlQuery.setBaseDirectory(paths.getParent().toFile().getName());
                     sqlQuery.setSqlQueryType(
                             getQueryTypeForSQLQuery(paths.getFileName().toString(), paths.getParent()));
-                    sqlQueries.add(sqlQuery);
+                    sqlQuery.setFollowedByQuery(
+                            getFollowedBySQLQuery(paths.getFileName().toString(), paths.getParent()));
+                    sqlQueries.put(paths.getFileName().toString(), sqlQuery);
                     if (log.isDebugEnabled()) {
                         log.debug("Following SQL query read from the file: {}", sqlQuery);
                     }
@@ -101,8 +103,8 @@ public class SQLFileReader {
         if (Files.exists(Paths.get(basePath.toString(), queryFileName + PROPERTIES_EXTENSION))) {
             try {
                 Properties properties = new Properties();
-                properties.load(Files.newInputStream(Paths.get(basePath.toString(), queryFileName +
-                        PROPERTIES_EXTENSION)));
+                properties.load(Files
+                        .newInputStream(Paths.get(basePath.toString(), queryFileName + PROPERTIES_EXTENSION)));
                 String type = properties.getProperty("type");
                 if (log.isDebugEnabled()) {
                     log.debug("Properties file found for {} and type is {}", queryFileName, type);
@@ -115,5 +117,40 @@ public class SQLFileReader {
 
         // If no properties file, we assume it is as a domain separated one.
         return SQLQueryType.DOMAIN_SEPARATED;
+    }
+
+    /**
+     * Get the followed by query file name of this query. To decide the followed by query file name there will be a
+     * control file (.properties) with the same name of the SQL query file. Inside that file we define the followed
+     * by query file name.
+     *
+     * @param queryFileName Name of the followed by SQL query file.
+     * @param basePath      Base path where this query file exist.
+     * @return Followed by query file name as a String
+     * @throws SQLReaderException Error while reading the file.
+     */
+    public String getFollowedBySQLQuery(String queryFileName, Path basePath) throws SQLReaderException {
+
+        if (!Files.isDirectory(basePath)) {
+            throw new SQLReaderException("Invalid base path. Base path should be a directory.");
+        }
+
+        if (Files.exists(Paths.get(basePath.toString(), queryFileName + PROPERTIES_EXTENSION))) {
+            try {
+                Properties properties = new Properties();
+                properties.load(Files
+                        .newInputStream(Paths.get(basePath.toString(), queryFileName + PROPERTIES_EXTENSION)));
+                String followedByQuery = properties.getProperty("followedByQuery");
+                if (log.isDebugEnabled()) {
+                    log.debug("Properties file found for {} and followedByQuery is {}", queryFileName, followedByQuery);
+                }
+                return followedByQuery;
+            } catch (IOException e) {
+                throw new SQLReaderException("Error occurred while reading the SQL property files.", e);
+            }
+        }
+
+        // If no properties file, we assume it is undefined.
+        return null;
     }
 }
