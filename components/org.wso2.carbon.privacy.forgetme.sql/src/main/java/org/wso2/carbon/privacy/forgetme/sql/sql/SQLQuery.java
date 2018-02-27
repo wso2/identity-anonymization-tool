@@ -26,6 +26,7 @@ public class SQLQuery {
     private String sqlQuery;
     private String baseDirectory;
     private SQLQueryType sqlQueryType;
+    private String followedByQuery;
 
     public SQLQuery(String sqlQuery) {
         this.sqlQuery = sqlQuery;
@@ -59,4 +60,13 @@ public class SQLQuery {
     public void setBaseDirectory(String baseDirectory) {
         this.baseDirectory = baseDirectory;
     }
+
+    public String getFollowedByQuery() {
+        return followedByQuery;
+    }
+
+    public void setFollowedByQuery(String followedByQuery) {
+        this.followedByQuery = followedByQuery;
+    }
+
 }
