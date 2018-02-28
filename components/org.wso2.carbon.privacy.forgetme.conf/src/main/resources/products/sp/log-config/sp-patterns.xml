@@ -102,7 +102,7 @@
     </pattern>
 
     <pattern key="carbon-analytics-common-11">
-        <detectPattern>(.)*Retrieving user roles by retrieving user '${usernmae}'.</detectPattern>
+        <detectPattern>(.)*Retrieving user roles by retrieving user '${username}'.</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
 

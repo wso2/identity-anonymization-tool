@@ -63,7 +63,9 @@ public class LogFileProcessor {
         List<MatchAndReplace> compiledPatterns = compile(patternList, templatePatternData);
         for (File file : fileList) {
             reportAppender.appendSection("Starting File %s", file.getAbsolutePath());
-
+            if (log.isDebugEnabled()) {
+                log.debug("Reading log file {}.", file.getName());
+            }
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
                     BufferedWriter writer = new BufferedWriter(
@@ -103,6 +105,8 @@ public class LogFileProcessor {
             } catch (IOException ex) {
                 log.error("Error occurred while file read/write operation.", ex);
                 throw new LogProcessorException(ex);
+            } catch (Exception ex) {
+                throw new LogProcessorException("Error occurred while processing log file.", ex);
             }
             reportAppender.appendSectionEnd("Completed " + file);
         }
@@ -112,6 +116,9 @@ public class LogFileProcessor {
 
         List<MatchAndReplace> result = new ArrayList<>(patternList.size());
         for (Patterns.Pattern pattern : patternList) {
+            if (log.isDebugEnabled()) {
+                log.debug("Compiling pattern {}.", pattern.getKey());
+            }
             String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(), templatePatternData)
                     .trim();
             Pattern regexp = Pattern.compile(formattedDetectPattern);

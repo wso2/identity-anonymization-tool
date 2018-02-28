@@ -56,6 +56,11 @@
             <outputDirectory>identity-anonymization-tool-${pom.version}</outputDirectory>
         </fileSet>
 
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.batch-execute/target/bin</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/bin</outputDirectory>
+        </fileSet>
+
         <!-- EI related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/datasources</directory>

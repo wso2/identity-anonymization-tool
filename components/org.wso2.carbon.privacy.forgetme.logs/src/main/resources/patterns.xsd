@@ -1,7 +1,8 @@
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="patterns.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
     <xs:element name="patterns">
         <xs:annotation>
-            <xs:documentation>~  Copyright (c) 2005-2014, WSO2 Inc. (http://wso2.com) All Rights Reserved.
+            <xs:documentation>
+                ~  Copyright (c) 2005-2014, WSO2 Inc. (http://wso2.com) All Rights Reserved.
                 ~
                 ~  WSO2 Inc. licenses this file to you under the Apache License,
                 ~  Version 2.0 (the "License"); you may not use this file except
@@ -15,7 +16,8 @@
                 ~  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
                 ~  KIND, either express or implied.  See the License for the
                 ~  specific language governing permissions and limitations
-                ~  under the License.</xs:documentation>
+                ~  under the License.
+            </xs:documentation>
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>

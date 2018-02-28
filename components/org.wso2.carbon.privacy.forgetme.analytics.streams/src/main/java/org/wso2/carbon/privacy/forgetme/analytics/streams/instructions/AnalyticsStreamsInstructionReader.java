@@ -110,8 +110,7 @@ public class AnalyticsStreamsInstructionReader implements InstructionReader {
             throw new AnalyticsStreamsProcessorException("Error in reading stream definition: " +
                     streamFile.getName(), e);
         } catch (JsonParseException e) {
-            throw new AnalyticsStreamsProcessorException("Invalid stream definition:" +
-                    streamFile.getName(), e);
+            throw new AnalyticsStreamsProcessorException("Invalid stream definition:" + streamFile.getName(), e);
         }
     }
 }
