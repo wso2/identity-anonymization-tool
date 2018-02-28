@@ -72,6 +72,7 @@ public class ForgetMeTool {
 
     private static final String COMMAND_NAME = "forget-me";
     private static final String CONFIG_FILE_NAME = "config.json";
+    private static final String CONF_DIRECTORY = "/conf";
 
     private ForgetMeExecutionEngine forgetMeExecutionEngine;
 
@@ -101,7 +102,7 @@ public class ForgetMeTool {
         if (cmd.hasOption(CMD_OPTION_CONFIG_DIR)) {
             homeDir = cmd.getOptionValue(CMD_OPTION_CONFIG_DIR);
         } else {
-            homeDir = Paths.get(System.getProperty("user.dir")).getParent().toString();
+            homeDir = Paths.get(System.getProperty("user.dir")).getParent().toString() + CONF_DIRECTORY;
         }
         UserIdentifier userIdentifier;
         if (cmd.hasOption(CMD_OPTION_CONFIG_USER_NAME)) {

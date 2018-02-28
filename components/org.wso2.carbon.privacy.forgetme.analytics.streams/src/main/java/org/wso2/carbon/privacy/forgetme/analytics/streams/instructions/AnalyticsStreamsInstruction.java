@@ -55,6 +55,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
     private Environment environment;
 
     public AnalyticsStreamsInstruction(Environment environment, List<Streams.Stream> streams) {
+
         this.environment = environment;
         this.streams = streams;
         this.anonymizedRecords = new ArrayList<>();
@@ -67,6 +68,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      * @return Table name
      */
     private static String getTableName(String streamName) {
+
         return streamName.replace(".", "_").toUpperCase();
     }
 
@@ -77,6 +79,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      * @return Hashed value
      */
     private static Object hashRecordValue(Object value) {
+
         return Objects.hash(value);
     }
 
@@ -84,6 +87,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
     public ForgetMeResult execute(UserIdentifier userIdentifier, ProcessorConfig processorConfig,
                                   Environment environment, ReportAppender reportAppender)
             throws InstructionExecutionException {
+
         AnalyticsDataService analyticsDataService = getAnalyticsDataService();
         for (Streams.Stream stream : this.streams) {
             filterRecords(analyticsDataService, userIdentifier, stream);
@@ -103,6 +107,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      * @return
      */
     private AnalyticsDataService getAnalyticsDataService() {
+
         // This requires "wso2_custom_conf_dir" property to point to the target DAS pack's conf directory.
         String carbonHome = environment.getProperty(CARBON_HOME);
         System.setProperty(CUSTOM_CONF_DIR_NAME, Paths.get(carbonHome, CUSTOM_CONF_DIR_PATH_SEGMENT).toString());
@@ -120,6 +125,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      */
     private void filterRecords(AnalyticsDataService analyticsDataService, UserIdentifier userIdentifier,
                                Streams.Stream stream) {
+
         try {
             AnalyticsDataResponse analyticsDataResponse = analyticsDataService.get(userIdentifier.getTenantId(),
                     getTableName(stream.getStreamName()), 1, null, Long.MIN_VALUE, Long.MAX_VALUE, 0,
@@ -149,6 +155,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      * @throws AnalyticsException
      */
     private void updateQueuedRecords(AnalyticsDataService analyticsDataService) throws AnalyticsException {
+
         analyticsDataService.put(this.anonymizedRecords);
     }
 
@@ -161,6 +168,7 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
      * @return
      */
     private Record anonymizeRecord(Record record, Streams.Stream stream, String pseudonym) {
+
         for (String attribute : stream.getAttributes()) {
             if (stream.isIdAttribute(attribute)) {
                 record.getValues().put(attribute, pseudonym);

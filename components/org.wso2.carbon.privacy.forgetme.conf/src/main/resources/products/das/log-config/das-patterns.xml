@@ -37,7 +37,7 @@
     </pattern>
 
     <pattern key="carbon-dashboards-2">
-        <detectPattern>(.)*a user logged into the portal username: ${username}, domain:${userDomain}</detectPattern>
+        <detectPattern>(.)*a user logged into the portal username: ${username}, domain:${userstoreDomain}</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
 
