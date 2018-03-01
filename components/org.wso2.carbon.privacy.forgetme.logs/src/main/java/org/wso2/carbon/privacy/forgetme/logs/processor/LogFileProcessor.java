@@ -88,11 +88,17 @@ public class LogFileProcessor {
                             // Here, if the replacePattern is not empty replace the username occurrences in the
                             // line. If it is empty, it indicates that a possible match is found in the current line.
                             if (StringUtils.isNotBlank(formattedReplacePattern)) {
-                                replacement = replacement
-                                        .replaceAll(formattedReplacePattern, userIdentifier.getPseudonym());
+                                replacement = replacement.replaceAll(formattedReplacePattern, userIdentifier
+                                        .getPseudonym());
                                 reportAppender.append("Replaced, %d, %b", lineReader.getLineNumber(), true);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Replaced {}", lineReader.getLineNumber());
+                                }
                             } else {
                                 reportAppender.append("Not Replaced, %d, %b", lineReader.getLineNumber(), true);
+                                if (log.isDebugEnabled()) {
+                                    log.debug("Not replaced {}", lineReader.getLineNumber());
+                                }
                             }
                         }
                     }
@@ -108,6 +114,7 @@ public class LogFileProcessor {
             } catch (Exception ex) {
                 throw new LogProcessorException("Error occurred while processing log file.", ex);
             }
+            log.info("Completed scanning log file: {}", file);
             reportAppender.appendSectionEnd("Completed " + file);
         }
     }
