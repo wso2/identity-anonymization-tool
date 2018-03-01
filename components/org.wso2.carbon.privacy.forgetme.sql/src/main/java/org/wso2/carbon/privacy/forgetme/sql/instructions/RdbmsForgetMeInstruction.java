@@ -74,6 +74,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
 
         SQLFileReader sqlFileReader = new SQLFileReader(sqlDir);
         reportAppender.appendSection("Processing SQL in directory %s", sqlDir);
+        log.info("Processing SQL in directory {}", sqlFileReader);
         try {
             Map<String, SQLQuery> sqlQueries = sqlFileReader.readAllQueries();
 
@@ -142,6 +143,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
         }
 
         reportAppender.appendSection("Completed all SQLs in directory %s", sqlDir);
+        log.info("Completed all SQLa in directory {}.", sqlDir);
         return new ForgetMeResult();
     }
 
@@ -155,6 +157,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
      */
     private Map<String, UserSQLQuery> getSelectAndUpdateQueries(UserSQLQuery selectQuery, SQLQuery updateQuery,
             UserIdentifier userIdentifier) {
+
         Map<String, UserSQLQuery> queries = new HashMap<>();
         UserSQLQuery updateSQLQuery = new UserSQLQuery();
         updateSQLQuery.setSqlQuery(updateQuery);
