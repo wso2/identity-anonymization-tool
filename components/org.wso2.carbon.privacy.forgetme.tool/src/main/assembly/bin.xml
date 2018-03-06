@@ -16,8 +16,9 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-<!--<!DOCTYPE assembly [
-        <!ELEMENT assembly (formats|includeBaseDirectory|fileSets|dependencySets|files)*>
+<!DOCTYPE assembly [
+        <!ELEMENT assembly (id|formats|includeBaseDirectory|fileSets|dependencySets|files)*>
+        <!ELEMENT id (#PCDATA)>
         <!ELEMENT formats (format)*>
         <!ELEMENT format (#PCDATA)>
         <!ELEMENT includeBaseDirectory (#PCDATA)>
@@ -38,7 +39,7 @@
         <!ELEMENT source (#PCDATA)>
         <!ELEMENT destName (#PCDATA)>
         <!ELEMENT filtered (#PCDATA)>
-        ]>-->
+        ]>
 <assembly>
     <id>identity-anonymization-bin</id>
     <formats>
@@ -49,34 +50,45 @@
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/carbon-4.4.x</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <fileSet>
             <directory>target/dist</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}</outputDirectory>
+            <excludes>
+                <exclude>**/forgetme</exclude>
+                <exclude>**/forgetme.bat</exclude>
+            </excludes>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.batch-execute/target/bin</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/bin</outputDirectory>
+            <fileMode>744</fileMode>
         </fileSet>
 
         <!-- EI related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/datasources</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/ei/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <!--IS related configs -->
@@ -84,96 +96,129 @@
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/datasources
             </directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
-            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/log-config
-            </directory>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <!--APIM related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/datasources</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/apim/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <!--IOT related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/datasources</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/iot/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <!--DAS related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/datasources</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/das/streams</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/streams</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
 
         <!--SP related configs -->
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/datasources</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/datasources</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/sql</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/sql</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/log-config</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/log-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
         <fileSet>
             <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/sp/conf/</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/product-config</outputDirectory>
+            <fileMode>644</fileMode>
         </fileSet>
     </fileSets>
 
+    <files>
+        <file>
+            <source>target/dist/bin/forgetme</source>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/bin</outputDirectory>
+            <destName>forgetme.sh</destName>
+            <fileMode>744</fileMode>
+        </file>
+        <file>
+            <source>target/dist/bin/forgetme.bat</source>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/bin</outputDirectory>
+            <fileMode>744</fileMode>
+        </file>
+    </files>
 </assembly>
