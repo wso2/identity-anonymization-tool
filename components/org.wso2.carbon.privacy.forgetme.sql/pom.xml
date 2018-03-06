@@ -33,12 +33,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon.datasources</groupId>
-            <artifactId>org.wso2.carbon.datasource.core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon.privacy</groupId>
             <artifactId>org.wso2.carbon.privacy.forgetme.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.datasources</groupId>
+            <artifactId>org.wso2.carbon.datasource.core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

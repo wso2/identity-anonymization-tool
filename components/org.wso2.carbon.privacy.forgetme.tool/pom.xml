@@ -101,7 +101,7 @@
                     <programs>
                         <program>
                             <mainClass>org.wso2.carbon.privacy.forgetme.ForgetMeTool</mainClass>
-                            <id>forget-me</id>
+                            <id>forgetme</id>
                         </program>
                     </programs>
                 </configuration>
