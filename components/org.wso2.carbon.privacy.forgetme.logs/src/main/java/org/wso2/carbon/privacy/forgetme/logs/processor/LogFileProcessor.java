@@ -22,9 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.logs.LogProcessorConstants;
-import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.logs.beans.Patterns;
 import org.wso2.carbon.privacy.forgetme.logs.exception.LogProcessorException;
 
@@ -54,7 +54,7 @@ public class LogFileProcessor {
     private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
-    private static final String TEMP_FILE_PREFIX = ".temp.txt";
+    private static final String TEMP_FILE_PREFIX = "anon-";
 
     public void processFiles(UserIdentifier userIdentifier, ReportAppender reportAppender,
                              List<Patterns.Pattern> patternList, List<File> fileList) throws LogProcessorException {
@@ -68,8 +68,8 @@ public class LogFileProcessor {
             }
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
-                    BufferedWriter writer = new BufferedWriter(
-                            new FileWriter(file.toPath().toString() + TEMP_FILE_PREFIX))) {
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(Paths.get(file.getParent(),
+                            TEMP_FILE_PREFIX + System.currentTimeMillis() + "-" + file.getName()).toString()))) {
                 String line;
                 while ((line = lineReader.readLine()) != null) {
                     String replacement = line;
