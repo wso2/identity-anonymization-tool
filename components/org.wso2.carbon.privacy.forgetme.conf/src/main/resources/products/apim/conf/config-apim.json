@@ -8,7 +8,7 @@
       "dir": "log-config",
       "type": "log-file",
       "processor" : "log-file",
-      "log-file-path" : "logs",
+      "log-file-path" : "repository/logs",
       "log-file-name-regex" : "(.)*(log|out)"
     },
     {
@@ -19,7 +19,7 @@
   ],
   "extensions": [
     {
-      "dir": "datasources",
+      "dir": "../../../../conf/datasources",
       "type": "datasource",
       "processor" : "rdbms",
       "properties" : [
