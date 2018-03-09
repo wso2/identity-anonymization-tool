@@ -221,9 +221,7 @@ public class ForgetMeExecutionEngine {
         }
 
         private String getReportFileName() {
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-            return "Report-" + name + "-" + simpleDateFormat.format(new Date()) + ".txt";
+            return "Report-" + name + "-" + System.currentTimeMillis() + ".txt";
         }
     }
 }
