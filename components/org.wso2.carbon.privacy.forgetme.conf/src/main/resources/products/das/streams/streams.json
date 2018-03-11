@@ -1,3 +1,14 @@
 {
-  "streams": []
+    "streams": [
+        {
+            "streamName": "",
+            "attributes": [],
+            "id": ""
+        },
+        {
+            "streamName": "",
+            "attributes": [],
+            "id": ""
+        }
+    ]
 }
