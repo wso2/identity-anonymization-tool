@@ -1,3 +1,14 @@
 {
-  "streams": []
+    "streams": [
+        {
+            "streamName": "org.wso2.gdpr.students",
+            "attributes": ["username", "email", "dateOfBirth"],
+            "id": "username"
+        },
+        {
+            "streamName": "org.wso2.gdpr.students.marks",
+            "attributes": ["username"],
+            "id": "username"
+        }
+    ]
 }
