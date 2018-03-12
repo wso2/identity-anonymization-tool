@@ -161,9 +161,8 @@ public class ConfigReader {
     private Properties getAdditionalProperties(JSONObject dirConfig, VariableResolver variableResolver) {
 
         Properties properties = new Properties();
-        dirConfig.forEach((key, value) -> {
-            properties.setProperty(key.toString(), variableResolver.resolve(value.toString()));
-        });
+        dirConfig.forEach((key, value) -> properties.setProperty(key.toString(),
+                variableResolver.resolve(value.toString())));
         return properties;
     }
 

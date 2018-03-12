@@ -143,7 +143,7 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
         }
 
         reportAppender.appendSection("Completed all SQLs in directory %s", sqlDir);
-        log.info("Completed all SQLa in directory {}.", sqlDir);
+        log.info("Completed all SQLs in directory {}.", sqlDir);
         return new ForgetMeResult();
     }
 

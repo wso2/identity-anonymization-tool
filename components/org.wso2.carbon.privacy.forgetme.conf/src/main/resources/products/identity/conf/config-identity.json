@@ -8,7 +8,7 @@
       "type": "log-file",
       "processor" : "log-file",
       "log-file-path" : "repository/logs",
-      "log-file-name-regex" : "wso2carbon.log"
+      "log-file-name-regex" : "^(wso2carbon(.)*\\.log|audit(.)*\\.log)$"
     },
     {
       "dir": "sql",
