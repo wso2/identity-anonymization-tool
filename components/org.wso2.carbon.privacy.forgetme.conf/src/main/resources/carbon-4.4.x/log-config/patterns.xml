@@ -52,5 +52,10 @@
         <detectPattern>(.)*(CarbonAuthenticationUtil)(.)*${username}@${tenantDomain}(.)*</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
+    
+    <pattern key="pattern7">
+        <detectPattern>(.)*PRIMARY/${username}@${tenantDomain}(.)*</detectPattern>
+        <replacePattern>${username}@${tenantDomain}</replacePattern>
+    </pattern>
 
 </patterns>
