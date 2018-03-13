@@ -1,0 +1,19 @@
+{
+  "streams": [
+    {
+      "streamName": "org.wso2.is.analytics.stream.OverallSession",
+      "attributes": ["username"],
+      "id": "username"
+    },
+    {
+      "streamName": "org.wso2.is.analytics.stream.SessionInfo",
+      "attributes": ["username", "remoteIp", "usernameWithTenantDomainAndUserstoreDomain"],
+      "id": "username"
+    },
+    {
+      "streamName": "org.wso2.is.analytics.stream.LoginSuccessAfterMultipleFailures",
+      "attributes": ["username"],
+      "id": "username"
+    },
+  ]
+}

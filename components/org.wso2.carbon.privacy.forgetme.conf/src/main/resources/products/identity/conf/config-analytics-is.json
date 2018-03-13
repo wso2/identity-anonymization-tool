@@ -1,0 +1,12 @@
+{
+  "processors": [
+    "analytics-streams"
+  ],
+  "directories": [
+    {
+      "dir": "analytics/streams",
+      "type": "analytics-streams",
+      "processor": "analytics-streams"
+    }
+  ]
+}
