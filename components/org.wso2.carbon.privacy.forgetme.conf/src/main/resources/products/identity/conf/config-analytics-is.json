@@ -4,7 +4,7 @@
   ],
   "directories": [
     {
-      "dir": "analytics/streams",
+      "dir": "streams",
       "type": "analytics-streams",
       "processor": "analytics-streams"
     }
