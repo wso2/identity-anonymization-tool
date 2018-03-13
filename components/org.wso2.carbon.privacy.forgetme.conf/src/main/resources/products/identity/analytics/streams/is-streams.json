@@ -14,6 +14,6 @@
       "streamName": "org.wso2.is.analytics.stream.LoginSuccessAfterMultipleFailures",
       "attributes": ["username"],
       "id": "username"
-    },
+    }
   ]
 }
