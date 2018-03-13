@@ -126,6 +126,11 @@ public class AnalyticsStreamsInstruction implements ForgetMeInstruction {
     private void filterRecords(AnalyticsDataService analyticsDataService, UserIdentifier userIdentifier,
                                Streams.Stream stream) {
 
+        // We cannot proceed if the stream is null. This can be happen due to empty stream definitions in the file.
+        if (stream == null) {
+            return;
+        }
+
         try {
             AnalyticsDataResponse analyticsDataResponse = analyticsDataService.get(userIdentifier.getTenantId(),
                     getTableName(stream.getStreamName()), 1, null, Long.MIN_VALUE, Long.MAX_VALUE, 0,
