@@ -40,6 +40,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -89,6 +93,11 @@ public class ForgetMeTool {
         options.addOption(CMD_OPTION_CONFIG_TENANT_ID, true, "Tenant ID (optional. default: -1234)");
         options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true,
                 "Pseudonym, which the user name to be replaced with (optional)");
+
+        if (System.getProperty("carbon.components.dir.path") != null) {
+            addJarFileUrls(new File(System.getProperty("carbon.components.dir.path")));
+        }
+
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -222,5 +231,36 @@ public class ForgetMeTool {
 
         return userIdentifier;
     }
+
+    /**
+     * Add JAR files found in the given directory to the Classpath. This fix is done due to terminal's argument character limitation.
+     *
+     * @param root the directory to recursively search for JAR files.
+     * @throws java.net.MalformedURLException If a provided JAR file URL is malformed
+     */
+    private static void addJarFileUrls(File root) throws Exception {
+        File[] children = root.listFiles();
+        if (children == null) {
+            return;
+        }
+        for (File child : children) {
+            if (child.isFile() && child.canRead() &&
+                    child.getName().toLowerCase().endsWith(".jar") && !child.getName().contains("slf4j")) {
+                addPath(child.getPath());
+            }
+        }
+    }
+
+    private static void addPath(String s) throws Exception {
+        File f = new File(s);
+        URL u = f.toURL();
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class<URLClassLoader> urlClass = URLClassLoader.class;
+        Method method = urlClass.getDeclaredMethod("addURL", URL.class);
+        method.setAccessible(true);
+        method.invoke(urlClassLoader, u);
+    }
+
+
 
 }
