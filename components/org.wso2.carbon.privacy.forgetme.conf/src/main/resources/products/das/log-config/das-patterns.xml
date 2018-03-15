@@ -30,6 +30,10 @@
         <detectPattern>(.)*login as ${username}</detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
+    <pattern key="product-das-3">
+        <detectPattern>(.)*(${username}@${tenantDomain}(\s)*(\[)${tenantId}(\])|)(.)*(Failed Administrator login attempt ')${username}(\[)${tenantId}(\]' at)</detectPattern>
+        <replacePattern>(${username}(\[)${tenantId}(\])(.)*|${username}@${tenantDomain})</replacePattern>
+    </pattern>
     
     <pattern key="carbon-dashboards-1">
         <detectPattern>(.)*a user logged out from the portal username: ${username}, domain:${userstoreDomain}</detectPattern>
