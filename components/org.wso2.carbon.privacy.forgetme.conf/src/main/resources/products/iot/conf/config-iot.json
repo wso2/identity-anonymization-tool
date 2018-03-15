@@ -7,22 +7,8 @@
       "dir": "log-config",
       "type": "log-file",
       "processor" : "log-file",
-      "log-file-path" : "logs",
-      "log-file-name-regex" : "wso2carbon.log"
-    },
-    {
-      "dir": "log-config",
-      "type": "log-file",
-      "processor" : "log-file",
-      "log-file-path" : "logs",
-      "log-file-name-regex" : "audit.log"
-    },
-    {
-      "dir": "log-config",
-      "type": "log-file",
-      "processor" : "log-file",
-      "log-file-path" : "logs",
-      "log-file-name-regex" : "warn.log"
+      "log-file-path" : "repository/logs",
+      "log-file-name-regex" : "(.)*(log|out)"
     },
     {
       "dir": "sql",
@@ -32,7 +18,7 @@
   ],
   "extensions": [
     {
-      "dir": "datasources",
+      "dir": "../../../../conf/datasources",
       "type": "datasource",
       "processor" : "rdbms",
       "properties" : [
