@@ -26,7 +26,7 @@
           "identity": "WSO2AM_DB",
           "apim": "WSO2AM_DB",
           "um": "WSO2_CARBON_DB",
-          "iot": "iot"
+          "iot": "DM_DS"
         }
       ]
     }

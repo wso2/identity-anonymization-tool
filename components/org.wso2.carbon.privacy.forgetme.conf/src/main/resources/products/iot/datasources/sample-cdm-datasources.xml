@@ -22,7 +22,7 @@
     </providers>
     <datasources>
         <datasource>
-            <name>iot</name>
+            <name>DM_DS</name>
             <description>The datasource used for IoT server</description>
             <definition type="RDBMS">
                 <configuration>
