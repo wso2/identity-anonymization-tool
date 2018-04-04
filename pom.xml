@@ -16,7 +16,8 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -200,6 +201,11 @@
                 <version>${org.testng.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -225,6 +231,7 @@
         <antrun.plugin.version>1.7</antrun.plugin.version>
         <appasembler.plugin.version>2.0.0</appasembler.plugin.version>
         <jacoco.version>0.7.9</jacoco.version>
+        <commons-codec.version>1.4</commons-codec.version>
 
         <org.junit.version>3.8.1</org.junit.version>
         <org.testng.version>6.11</org.testng.version>

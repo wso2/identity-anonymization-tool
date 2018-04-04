@@ -37,6 +37,10 @@ User Store Domain (optional)|Default = “PRIMARY”
 example
 > -D Finance-Domain
 
+###### Option sha256
+To enable SHA256 hashing for anonymizing the given ID attribute (optional)
+> -sha256
+
 ###### Option pu
 The pseudonym which the user name needs to be
 replaced with. (optional)  Default = A random UUID
