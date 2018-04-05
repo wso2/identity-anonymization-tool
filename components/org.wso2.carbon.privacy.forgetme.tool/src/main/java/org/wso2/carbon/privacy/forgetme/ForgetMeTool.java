@@ -23,6 +23,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ public class ForgetMeTool {
     private static final String CMD_OPTION_CONFIG_TENANT_ID = "TID";
     private static final String CMD_OPTION_CONFIG_USER_PSEUDONYM = "pu";
     private static final String CMD_OPTION_HELP = "help";
+    private static final String CMD_OPTION_ENABLE_SHA256_HASHING = "sha256";
 
     private static final String DEFAULT_TENANT_DOMAIN = "carbon.super";
     private static final String DEFAULT_TENANT_ID = "-1234";
@@ -93,6 +95,7 @@ public class ForgetMeTool {
         options.addOption(CMD_OPTION_CONFIG_TENANT_ID, true, "Tenant ID (optional. default: -1234)");
         options.addOption(CMD_OPTION_CONFIG_USER_PSEUDONYM, true,
                 "Pseudonym, which the user name to be replaced with (optional)");
+        options.addOption(CMD_OPTION_ENABLE_SHA256_HASHING, false, "Enable SHA256 hashing for anonymizing the ID attribute (optional)");
 
         if (System.getProperty("carbon.components.dir.path") != null) {
             addJarFileUrls(new File(System.getProperty("carbon.components.dir.path")));
@@ -169,14 +172,18 @@ public class ForgetMeTool {
         }
     }
 
-    private static String createPseudonym(String optionValue) {
+    private static String createPseudonym(CommandLine cmd) {
 
-        String result = optionValue;
-        if (StringUtils.isEmpty(optionValue)) {
-            result = UUID.randomUUID().toString();
-            log.info("Generating pseudonym as pseudo name is not provided : " + result);
+        String pseudonym = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_PSEUDONYM);
+        if (StringUtils.isEmpty(pseudonym) && cmd.hasOption(CMD_OPTION_ENABLE_SHA256_HASHING)) {
+            String userName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_NAME);
+            pseudonym = DigestUtils.sha256Hex(userName);
+            log.info("Generated SHA256 hash for the given ID attribute : " + pseudonym);
+        } else if (StringUtils.isEmpty(pseudonym)) {
+            pseudonym = UUID.randomUUID().toString();
+            log.info("Generating pseudonym as pseudo name is not provided : " + pseudonym);
         }
-        return result;
+        return pseudonym;
     }
 
     private static void printError(Options options) {
@@ -208,7 +215,7 @@ public class ForgetMeTool {
         String domainName = cmd.getOptionValue(CMD_OPTION_CONFIG_USER_DOMAIN, DEFAULT_USER_DOMAIN);
         String tenantName = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_DOMAIN, DEFAULT_TENANT_DOMAIN);
         String tenantId = cmd.getOptionValue(CMD_OPTION_CONFIG_TENANT_ID);
-        String pseudonym = createPseudonym(cmd.getOptionValue(CMD_OPTION_CONFIG_USER_PSEUDONYM));
+        String pseudonym = createPseudonym(cmd);
 
         if (!DEFAULT_TENANT_DOMAIN.equals(tenantName) && StringUtils.isEmpty(tenantId)) {
             throw new CommandlineException("Tenant ID needs to be passed for tenant name : " + tenantName);
