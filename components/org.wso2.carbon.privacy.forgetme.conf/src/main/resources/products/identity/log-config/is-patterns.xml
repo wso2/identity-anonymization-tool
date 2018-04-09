@@ -54,7 +54,7 @@
     </pattern>
 
     <pattern key="pattern7">
-        <detectPattern>(.)*(Action=)(Authentication|Add-User|Change-Password-by-User|Change-Password-by-Administrator|Delete-User|Set-User-Claim-Value|Set-User-Claim-Value|Set-User-Claim-Values|Delete-User-Claim-Values|Delete-User-Claim-Value|Update-Roles-of-User|Get-User-Claim-Value|Get-User-Claim-Values|Get-Roles-of-User)(\s)*(Target=)(${userstoreDomain}\\${username}|${username})(.)*
+        <detectPattern>(.)*(Action=)(Authentication|Add-User|Change-Password-by-User|Change-Password-by-Administrator|Delete-User|Set-User-Claim-Value|Set-User-Claim-Value|Set-User-Claim-Values|Delete-User-Claim-Values|Delete-User-Claim-Value|Update-Roles-of-User|Get-User-Claim-Value|Get-User-Claim-Values|Get-Roles-of-User)(\s)(Target=)(${userstoreDomain}\\${username}|${username})(\s)(.)*
         </detectPattern>
         <replacePattern>${username}</replacePattern>
     </pattern>
