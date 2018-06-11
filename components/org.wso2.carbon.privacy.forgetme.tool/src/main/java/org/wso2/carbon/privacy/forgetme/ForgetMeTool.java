@@ -148,11 +148,10 @@ public class ForgetMeTool {
      */
     private static void emitHelp(PrintStream out) {
 
-        InputStream inputStream = ForgetMeTool.class.getClassLoader().getResourceAsStream("help.md");
-        ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
-        WritableByteChannel writableByteChannel = Channels.newChannel(out);
         ByteBuffer buffer = ByteBuffer.allocateDirect(512);
-        try {
+        try ( InputStream inputStream = ForgetMeTool.class.getClassLoader().getResourceAsStream("help.md");
+              ReadableByteChannel readableByteChannel = Channels.newChannel(inputStream);
+              WritableByteChannel writableByteChannel = Channels.newChannel(out) ) {
             while (readableByteChannel.read(buffer) != -1) {
                 buffer.flip();
                 while (buffer.hasRemaining()) {
