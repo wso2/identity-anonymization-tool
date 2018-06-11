@@ -40,7 +40,7 @@
 
       <pattern key="pattern4">
           <detectPattern>(.)*(\{"performedBy":")${username}(")(.)*(|(\\"provider\\":\\")${username}(\\")|(\\"provider\\":\\")${username}(-AT-)${tenantDomain}(\\"))</detectPattern>
-          <replacePattern>(("performedBy":")${username}(")|(\\"provider\\":\\")${username}(\\")|(\\"provider\\":\\")${username}(-AT-)${tenantDomain}(\\"))</replacePattern>
+          <replacePattern>(${username}(")|(\\"provider\\":\\")${username}(\\")|(\\"provider\\":\\")${username}(-AT-)${tenantDomain}(\\"))</replacePattern>
       </pattern>
 
       <pattern key="pattern5">
