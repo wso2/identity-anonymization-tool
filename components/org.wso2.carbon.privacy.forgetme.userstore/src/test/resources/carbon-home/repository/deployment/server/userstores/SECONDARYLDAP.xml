@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><UserStoreManager class="org.wso2.carbon.user.core.ldap.ReadWriteLDAPUserStoreManager">
+      <Property name="ConnectionURL">ldap://localhost:10389</Property>
+      <Property name="ConnectionName">uid=admin,ou=system</Property>
+      <Property name="ConnectionPassword">admin</Property>
+      <Property name="UserSearchBase">ou=Users,dc=wso2,dc=org</Property>
+      <Property name="UserEntryObjectClass">wso2Person</Property>
+      <Property name="UserNameAttribute">uid</Property>
+      <Property name="UserNameSearchFilter">(&amp;(objectClass=person)(uid=?))</Property>
+      <Property name="UserNameListFilter">(objectClass=person)</Property>
+      <Property name="UserDNPattern"/>
+      <Property name="DisplayNameAttribute"/>
+      <Property name="Disabled">false</Property>
+      <Property name="ReadGroups">true</Property>
+      <Property name="WriteGroups">true</Property>
+      <Property name="GroupSearchBase">ou=Groups,dc=wso2,dc=org</Property>
+      <Property name="GroupEntryObjectClass">groupOfNames</Property>
+      <Property name="GroupNameAttribute">cn</Property>
+      <Property name="GroupNameSearchFilter">(&amp;(objectClass=groupOfNames)(cn=?))</Property>
+      <Property name="GroupNameListFilter">(objectClass=groupOfNames)</Property>
+      <Property name="RoleDNPattern"/>
+      <Property name="MembershipAttribute">member</Property>
+      <Property name="MemberOfAttribute"/>
+      <Property name="BackLinksEnabled">false</Property>
+      <Property name="UserNameJavaRegEx">[a-zA-Z0-9._-|//]{3,30}$</Property>
+      <Property name="UserNameJavaScriptRegEx">^[\S]{3,30}$</Property>
+      <Property name="UsernameJavaRegExViolationErrorMsg">Username pattern policy violated.</Property>
+      <Property name="PasswordJavaRegEx">^[\S]{5,30}$</Property>
+      <Property name="PasswordJavaScriptRegEx">^[\S]{5,30}$</Property>
+      <Property name="PasswordJavaRegExViolationErrorMsg">Password pattern policy violated.</Property>
+      <Property name="RoleNameJavaRegEx">[a-zA-Z0-9._-|//]{3,30}$</Property>
+      <Property name="RoleNameJavaScriptRegEx">^[\S]{3,30}$</Property>
+      <Property name="SCIMEnabled">false</Property>
+      <Property name="BulkImportSupported">true</Property>
+      <Property name="EmptyRolesAllowed">true</Property>
+      <Property name="PasswordHashMethod">PLAIN_TEXT</Property>
+      <Property name="MultiAttributeSeparator">,</Property>
+      <Property name="MaxUserNameListLength">100</Property>
+      <Property name="MaxRoleNameListLength">100</Property>
+      <Property name="kdcEnabled">false</Property>
+      <Property name="defaultRealmName">WSO2.ORG</Property>
+      <Property name="UserRolesCacheEnabled">true</Property>
+      <Property name="ConnectionPoolingEnabled">false</Property>
+      <Property name="LDAPConnectionTimeout">5000</Property>
+      <Property name="ReadTimeout">5000</Property>
+      <Property name="RetryAttempts">0</Property>
+      <Property name="CountRetrieverClass"/>
+      <Property name="java.naming.ldap.attributes.binary"> </Property>
+      <Property name="ClaimOperationsSupported">true</Property>
+      <Property name="MembershipAttributeRange">0</Property>
+      <Property name="UserCacheExpiryMilliseconds"/>
+      <Property name="UserDNCacheEnabled">true</Property>
+      <Property name="DomainName">SECONDARYLDAP</Property>
+      <Property name="Description"/>
+</UserStoreManager>
