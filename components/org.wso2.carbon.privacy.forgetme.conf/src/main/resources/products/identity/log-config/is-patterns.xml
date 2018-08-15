@@ -64,4 +64,9 @@
         <replacePattern>${username}</replacePattern>
     </pattern>
 
+    <pattern key="pattern9">
+        <detectPattern>(.)*(SAML2SSOAuthenticator)(.)*'${username}'(.)*</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
 </patterns>
