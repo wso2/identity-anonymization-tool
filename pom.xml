@@ -232,6 +232,11 @@
                 <version>${swagger-jaxrs.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${org.junit.version}</version>
@@ -292,7 +297,8 @@
         <cxf-bundle.wso2.version>2.7.16.wso2v1</cxf-bundle.wso2.version>
         <jackson.version>1.8.6</jackson.version>
         <spring-web.version>4.1.6.RELEASE</spring-web.version>
-        <swagger-jaxrs.version>1.5.2</swagger-jaxrs.version>
+        <swagger-jaxrs.version>1.5.20</swagger-jaxrs.version>
+        <com.fasterxml.jackson.version>2.9.6</com.fasterxml.jackson.version>
     </properties>
 
 </project>
