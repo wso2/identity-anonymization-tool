@@ -33,6 +33,7 @@ import org.wso2.carbon.user.core.config.RealmConfigXMLProcessor;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
@@ -159,15 +160,15 @@ public class UserStoreHandlerFactory {
             if (PRIMARY_USER_STORE_NAME.equals(userStoreDomain)) {
                 return realmConfiguration;
             } else {
-                userStoreConfigFilePath = carbonHome.resolve("repository/deployment/server/userstores/" +
-                        userStoreDomain.toUpperCase() + ".xml");
+                userStoreConfigFilePath = getUserStoreConfigFilePathForDomain
+                        ("repository/deployment/server/userstores/", userStoreDomain);
             }
         } else {
             if (PRIMARY_USER_STORE_NAME.equals(userStoreDomain)) {
                 return realmConfiguration;
             } else {
-                userStoreConfigFilePath = carbonHome.resolve("repository/tenants/" + tenantId + "/userstores/" +
-                        userStoreDomain.toUpperCase() + ".xml");
+                userStoreConfigFilePath = getUserStoreConfigFilePathForDomain
+                        ("repository/tenants/" + tenantId + "/userstores/", userStoreDomain);
             }
         }
 
@@ -194,6 +195,26 @@ public class UserStoreHandlerFactory {
             RealmConfigXMLProcessor builder = new RealmConfigXMLProcessor();
             return builder.buildRealmConfiguration(inStream);
         }
+    }
+
+    private Path getUserStoreConfigFilePathForDomain(String useStoreConfigFileDirectory, String userStoreDomain) throws
+            IOException,
+            UserStoreModuleException {
+
+        String expectedUserStoreFileName = userStoreDomain.replace(".", "_") + ".xml";
+        Path userStoreConfigFileDirectoryPath = carbonHome.resolve(useStoreConfigFileDirectory);
+        Path matchedUserStoreFile = Files.list(userStoreConfigFileDirectoryPath)
+                .filter(path -> path.toString().endsWith(".xml"))
+                .map(Path::getFileName)
+                .filter(path -> expectedUserStoreFileName.equalsIgnoreCase(path.toString()))
+                .findFirst().orElse(null);
+
+        if (matchedUserStoreFile == null) {
+            throw new UserStoreModuleException("Cannot find secondary user store configuration file for user " +
+                    "store domain: " + userStoreDomain);
+        }
+
+        return userStoreConfigFileDirectoryPath.resolve(matchedUserStoreFile);
     }
 
 }
