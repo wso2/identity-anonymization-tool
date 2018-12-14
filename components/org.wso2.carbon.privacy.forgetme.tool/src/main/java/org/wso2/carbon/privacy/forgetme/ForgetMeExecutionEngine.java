@@ -20,6 +20,8 @@ package org.wso2.carbon.privacy.forgetme;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.privacy.forgetme.api.report.CloseableReportAppender;
+import org.wso2.carbon.privacy.forgetme.api.report.CloseableReportAppenderBuilder;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeResult;
@@ -29,17 +31,15 @@ import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.config.InstructionReaderConfig;
+import org.wso2.carbon.privacy.forgetme.config.ReportAppenderConfig;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
 import org.wso2.carbon.privacy.forgetme.processor.ForgetMeCompositeResult;
 import org.wso2.carbon.privacy.forgetme.report.PlainTextReportAppender;
 import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
-import org.wso2.carbon.privacy.forgetme.runtime.SystemEnv;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -120,8 +120,10 @@ public class ForgetMeExecutionEngine {
         for (String processorName : executors.keySet()) {
             List<ForgetMeInstruction> instructions = getInstructions(processorName, systemEnv);
             ProcessorConfig processorConfig = systemConfig.getProcessorConfigMap().get(processorName);
+            ReportAppenderConfig reportAppenderConfig = systemConfig.getProcessorToReportAppenderConfigMap().get
+                    (processorName);
             ProcessorPipeline processorPipeline = new ProcessorPipeline(systemConfig.getWorkDir(), processorName,
-                    userIdentifier, processorConfig, instructions, systemEnv);
+                    userIdentifier, processorConfig, instructions, systemEnv, reportAppenderConfig);
             ExecutorService executorService = executors.get(processorName);
             Future<ForgetMeResult> future = executorService.submit(processorPipeline);
             submittedJobs.add(future);
@@ -192,9 +194,11 @@ public class ForgetMeExecutionEngine {
         private String name;
         private Path workDir;
         private Environment environment;
+        private ReportAppenderConfig reportAppenderConfig;
 
         public ProcessorPipeline(Path workDir, String name, UserIdentifier userIdentifier,
-                ProcessorConfig processorConfig, List<ForgetMeInstruction> instructionList, Environment environment) {
+                                 ProcessorConfig processorConfig, List<ForgetMeInstruction> instructionList,
+                                 Environment environment, ReportAppenderConfig reportAppenderConfig) {
 
             this.workDir = workDir;
             this.name = name;
@@ -202,22 +206,50 @@ public class ForgetMeExecutionEngine {
             this.processorConfig = processorConfig;
             this.instructionList = instructionList;
             this.environment = environment;
+            this.reportAppenderConfig = reportAppenderConfig;
         }
 
         @Override
         public ForgetMeResult call() throws InstructionExecutionException {
 
-            Path reportFile = Paths.get(workDir.toString(), getReportFileName());
-            try (PlainTextReportAppender defaultReportAppender = new PlainTextReportAppender(reportFile.toFile(),
-                    name)) {
-                defaultReportAppender.open();
+            try (CloseableReportAppender reportAppender = getReportAppender(reportAppenderConfig)) {
+                reportAppender.open();
                 ForgetMeCompositeResult forgetMeResult = new ForgetMeCompositeResult();
                 for (ForgetMeInstruction instruction : instructionList) {
-                    instruction.execute(userIdentifier, processorConfig, environment, defaultReportAppender);
+                    instruction.execute(userIdentifier, processorConfig, environment, reportAppender);
                 }
                 log.info("Processor execution completed. Processor : " + name);
                 return forgetMeResult;
             }
+        }
+
+        private CloseableReportAppender getReportAppender(ReportAppenderConfig reportAppenderConfig) {
+
+            if (reportAppenderConfig == null) {
+                return getDefaultAppender();
+            }
+
+            CloseableReportAppenderBuilder closeableReportAppenderBuilder = reportAppenderConfig.getReportAppenderBuilder();
+
+            try {
+                return closeableReportAppenderBuilder.build(name, reportAppenderConfig.getReportDirectoryPath(),
+                        reportAppenderConfig.getProperties(), userIdentifier);
+            } catch (ModuleException e) {
+                String msg = "Failed to load report appender: " + closeableReportAppenderBuilder.getType() + " for " +
+                        "processor: " + name;
+                log.warn(msg);
+                if (log.isDebugEnabled()) {
+                    log.debug(msg, e);
+                }
+
+                return getDefaultAppender();
+            }
+        }
+
+        private CloseableReportAppender getDefaultAppender() {
+
+            Path reportFile = Paths.get(workDir.toString(), getReportFileName());
+            return new PlainTextReportAppender(reportFile.toFile(), name);
         }
 
         private String getReportFileName() {

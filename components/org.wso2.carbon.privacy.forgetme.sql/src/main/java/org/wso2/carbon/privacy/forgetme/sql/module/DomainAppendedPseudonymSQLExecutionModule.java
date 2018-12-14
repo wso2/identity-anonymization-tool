@@ -95,8 +95,7 @@ public class DomainAppendedPseudonymSQLExecutionModule implements Module<UserSQL
             namedPreparedStatement.getPreparedStatement().execute();
 
             if (log.isDebugEnabled()) {
-                log.debug("Executed the sql query: {} for {}.", userSQLQuery.getSqlQuery().toString(), userSQLQuery
-                        .getUserIdentifier());
+                log.debug("Executed the sql query: {}", userSQLQuery.getSqlQuery().toString());
             }
         } catch (SQLException e) {
             throw new SQLModuleException(e);

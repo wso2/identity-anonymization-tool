@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.privacy.forgetme.config;
 
+import org.wso2.carbon.privacy.forgetme.api.report.CloseableReportAppenderBuilder;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
 
@@ -39,6 +40,7 @@ public class SystemConfig {
     private Map<String, ProcessorConfig> processorConfigMap = new HashMap<>();
     private List<String> processors = new ArrayList<>();
     private Path workDir;
+    private Map<String, ReportAppenderConfig> processorToReportAppenderConfigMap = new HashMap<>();
 
     /**
      * Adds an instruction reader with the given path.
@@ -91,5 +93,31 @@ public class SystemConfig {
 
     public void setWorkDir(Path workDir) {
         this.workDir = workDir;
+    }
+
+    /**
+     * Adds a report appender builder for a given processor with report appender parameters.
+     *
+     * @param processor                      processor name
+     * @param reportDirectoryPath            directory path of the report
+     * @param properties                     report properties
+     * @param closeableReportAppenderBuilder report appender builder
+     */
+    public void addReportAppenderConfig(String processor, Path reportDirectoryPath, Map<String, String> properties,
+                                        CloseableReportAppenderBuilder
+                                                closeableReportAppenderBuilder) {
+
+        processorToReportAppenderConfigMap.put(processor, new ReportAppenderConfig(reportDirectoryPath, properties,
+                closeableReportAppenderBuilder));
+    }
+
+    /**
+     * Returns the processor to report reader configuration mapping.
+     *
+     * @return a map of processor to report reader configuration
+     */
+    public Map<String, ReportAppenderConfig> getProcessorToReportAppenderConfigMap() {
+
+        return Collections.unmodifiableMap(processorToReportAppenderConfigMap);
     }
 }

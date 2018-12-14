@@ -20,7 +20,7 @@ package org.wso2.carbon.privacy.forgetme.report;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
+import org.wso2.carbon.privacy.forgetme.api.report.CloseableReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionExecutionException;
 
 import java.io.File;
@@ -34,7 +34,7 @@ import java.nio.file.StandardOpenOption;
  * Default report generator.
  *
  */
-public class PlainTextReportAppender implements ReportAppender, AutoCloseable {
+public class PlainTextReportAppender implements CloseableReportAppender {
 
     private static final Logger logger = LoggerFactory.getLogger(PlainTextReportAppender.class);
     private File file;
