@@ -146,6 +146,11 @@
                 <artifactId>org.wso2.carbon.privacy.forgetme.logs</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.wso2.carbon.privacy</groupId>
+                <artifactId>org.wso2.carbon.privacy.forgetme.userstore</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.wso2.carbon.datasources</groupId>

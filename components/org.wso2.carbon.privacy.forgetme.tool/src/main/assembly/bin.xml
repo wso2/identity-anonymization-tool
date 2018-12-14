@@ -118,6 +118,11 @@
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf/streams</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/products/identity/extensions</directory>
+            <outputDirectory>identity-anonymization-tool-${pom.version}/conf/extensions/identity</outputDirectory>
+            <fileMode>644</fileMode>
+        </fileSet>
 
         <!--APIM related configs -->
         <fileSet>
