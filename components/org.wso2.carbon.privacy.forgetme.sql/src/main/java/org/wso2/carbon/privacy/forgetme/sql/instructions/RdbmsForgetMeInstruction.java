@@ -31,6 +31,7 @@ import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.sql.config.DataSourceConfig;
 import org.wso2.carbon.privacy.forgetme.sql.exception.SQLModuleException;
 import org.wso2.carbon.privacy.forgetme.sql.module.AMApplicationRegistrationSQLExecutionModule;
+import org.wso2.carbon.privacy.forgetme.sql.module.DomainAppendedPseudonymSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainAppendedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.DomainSeparatedSQLExecutionModule;
 import org.wso2.carbon.privacy.forgetme.sql.module.IDNOauthConsumerAppsSQLExecutionModule;
@@ -126,6 +127,11 @@ public class RdbmsForgetMeInstruction implements ForgetMeInstruction {
                         break;
                     case SELECT_PROCEEDED_UPDATE:
                         break;
+                    case DOMAIN_APPENDED_PSEUDONYM:
+                        sqlExecutionModule = new DomainAppendedPseudonymSQLExecutionModule(dataSourceConfig);
+                        sqlExecutionModule.execute(userSQLQuery);
+                        break;
+
                     default:
                         throw new SQLModuleException("Cannot find a suitable execution module.");
                 }

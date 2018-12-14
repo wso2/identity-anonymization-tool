@@ -45,6 +45,9 @@ public enum SQLQueryType {
     SP_APP_UPDATE,
 
     //SQL update query which should be proceeded by a corresponding select query
-    SELECT_PROCEEDED_UPDATE
+    SELECT_PROCEEDED_UPDATE,
+
+    // SQL queries that has the domain appended to username and need the domain appended to pseudonym
+    DOMAIN_APPENDED_PSEUDONYM;
 
 }

@@ -24,14 +24,15 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
-import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
-import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
+import org.wso2.carbon.privacy.forgetme.api.report.CloseableReportAppenderBuilder;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.InstructionReader;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfig;
+import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
 import org.wso2.carbon.privacy.forgetme.config.ConfigConstants;
 import org.wso2.carbon.privacy.forgetme.config.SystemConfig;
+import org.wso2.carbon.privacy.forgetme.runtime.ForgetMeExecutionException;
 import org.wso2.carbon.privacy.forgetme.runtime.VariableResolver;
 
 import java.io.File;
@@ -41,7 +42,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,9 +57,11 @@ public class ConfigReader {
 
     private ServiceLoader<InstructionReader> readerServiceLoader;
     private ServiceLoader<ProcessorConfigReader> processorConfigReaderServiceLoader;
+    private ServiceLoader<CloseableReportAppenderBuilder> reportAppenderBuilderServiceLoader;
     private List<InstructionReader> instructionReaderList;
     private Map<String, InstructionReader> instructionReaderMap;
     private Map<String, ProcessorConfigReader> stringProcessorConfigReaderMap;
+    private Map<String, CloseableReportAppenderBuilder> reportAppenderBuilderMap;
     private static ConfigReader configReader = new ConfigReader();
 
     public static ConfigReader getInstance() {
@@ -71,12 +73,15 @@ public class ConfigReader {
 
         this.readerServiceLoader = ServiceLoader.load(InstructionReader.class);
         this.processorConfigReaderServiceLoader = ServiceLoader.load(ProcessorConfigReader.class);
+        this.reportAppenderBuilderServiceLoader = ServiceLoader.load(CloseableReportAppenderBuilder.class);
         this.instructionReaderList = new ArrayList<>();
         this.instructionReaderMap = new HashMap<>();
         this.readerServiceLoader.forEach(r -> instructionReaderList.add(r));
         this.readerServiceLoader.forEach(r -> instructionReaderMap.put(r.getType(), r));
         this.stringProcessorConfigReaderMap = new HashMap<>();
         this.processorConfigReaderServiceLoader.forEach(r -> stringProcessorConfigReaderMap.put(r.getName(), r));
+        this.reportAppenderBuilderMap = new HashMap<>();
+        this.reportAppenderBuilderServiceLoader.forEach(r -> reportAppenderBuilderMap.put(r.getType(), r));
     }
 
     /**
@@ -110,6 +115,11 @@ public class ConfigReader {
                 Object directories = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_DIRECTORIES);
                 if (directories instanceof JSONArray) {
                     loadDirectories((JSONArray) directories, systemConfig, basePath, environment);
+                }
+
+                Object reports = jsonObject.get(ConfigConstants.CONFIG_ELEMENT_REPORTS);
+                if (reports instanceof JSONArray) {
+                    loadReports((JSONArray) reports, systemConfig, basePath);
                 }
             }
         } catch (IOException e) {
@@ -210,6 +220,46 @@ public class ConfigReader {
                                     "Error in reading config of the processor : " + processor + ", from the path : "
                                             + path, me);
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private void loadReports(JSONArray reports, SystemConfig systemConfig, Path basePath) throws
+            ForgetMeExecutionException {
+
+        for (Object e : reports) {
+            if (e instanceof JSONObject) {
+                JSONObject reportConfig = (JSONObject) e;
+                Object processor = reportConfig.get(ConfigConstants.CONFIG_ELEMENT_PROCESSOR);
+                Object type = reportConfig.get(ConfigConstants.CONFIG_ELEMENT_TYPE);
+                Object dir = reportConfig.get(ConfigConstants.CONFIG_ELEMENT_DIR);
+                Object properties = reportConfig.get(ConfigConstants.CONFIG_ELEMENT_PROPERTIES);
+                if (processor instanceof String && dir instanceof String && type instanceof String) {
+                    if (!systemConfig.getProcessors().contains(processor)) {
+                        throw new ForgetMeExecutionException(
+                                "Could not find a processor: " + processor + " registered to load the report appender");
+                    }
+
+                    CloseableReportAppenderBuilder closeableReportAppenderBuilder = reportAppenderBuilderMap.get(type);
+                    if (closeableReportAppenderBuilder == null) {
+                        throw new ForgetMeExecutionException(
+                                "No report appender extension found for type: " + type + " for processor: " + processor);
+                    }
+
+                    Path path = basePath.resolve((String) dir);
+                    Map<String, String> propertiesMap;
+                    if (properties instanceof JSONArray) {
+                        propertiesMap = getPropertiesMap((JSONArray) properties);
+                    } else {
+                        propertiesMap = new HashMap<>();
+                    }
+
+                    systemConfig.addReportAppenderConfig((String) processor, path, propertiesMap, closeableReportAppenderBuilder);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Loaded report appender config of type: {} for processor : {}", type,
+                                processor);
                     }
                 }
             }
