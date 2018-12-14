@@ -29,6 +29,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 /**
+ * @deprecated This service is made redundant and the service API and implementation is moved to identity-governance.
+ * Replaced with service API: /t/{tenant-domain}/api/identity/user/v1.0/update-username
+ *
  * API implementation for user store operations.
  */
 @Path("/user")
@@ -44,13 +47,7 @@ public class UserService {
                            @PathParam("username") String username,
                            User user) {
 
-        try {
-
-            new ForgetMeToolExecutor().execute(tenantId, tenantDomain, userStoreDomain, username, user);
-
-        } catch (Exception e) {
-            log.error("An error occurred while renaming the user.", e);
-        }
+       log.warn("Invoked deprecated /forgetme/v1.0/user API.");
     }
 
 }
