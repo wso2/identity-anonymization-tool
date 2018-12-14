@@ -43,7 +43,7 @@ public class ForgetMeToolExecutor {
     private static final String SCRIPT_NAME_BASH = "forgetme.sh";
     private static final String SCRIPT_NAME_WINDOWS = "forgetme.bat";
     private static final String SYSTEM_PROPERTY_OS_NAME = "os.name";
-    private static final String USER_STORE_EXTENSION_CONF_RELATIVE_PATH = "ext/user-store/conf";
+    private static final String USER_STORE_EXTENSION_CONF_RELATIVE_PATH = "extensions/user-store/conf";
 
     public void execute(Integer tenantId, String tenantDomain, String userStoreDomain, String username, User user)
             throws Exception {

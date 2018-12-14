@@ -1,0 +1,61 @@
+{
+  "processors" : [
+    "rdbms", "user-store"
+  ],
+  "directories": [
+    {
+      "dir": "sql",
+      "type": "rdbms",
+      "processor" : "rdbms"
+    },
+    {
+      "dir": "user-store",
+      "type": "user-store",
+      "processor" : "user-store"
+    }
+  ],
+  "extensions": [
+    {
+      "dir": "../../../../../../conf/datasources",
+      "type": "datasource",
+      "processor" : "rdbms",
+      "properties" : [
+        {"identity": "WSO2_CARBON_DB"}
+      ]
+    },
+    {
+      "dir": "../../../../../../../",
+      "type": "user-store",
+      "processor" : "user-store",
+      "properties" : [
+        {
+          "handler-mapping;org.wso2.carbon.user.core.ldap.ReadWriteLDAPUserStoreManager":"read-write-ldap-handler",
+          "handler-mapping;org.wso2.carbon.user.core.jdbc.JDBCUserStoreManager":"jdbc-handler",
+          "handler-mapping;org.wso2.carbon.user.core.ldap.ActiveDirectoryUserStoreManager":"read-write-ldap-handler"
+        }
+      ]
+    }
+  ],
+  "reports": [
+    {
+    "dir": ".",
+    "type": "plain-text",
+    "processor": "user-store",
+    "properties": [
+        {
+          "log-user-identifier": "true"
+        }
+      ]
+    },
+    {
+    "dir": ".",
+    "type": "plain-text",
+    "processor": "rdbms",
+    "properties": [
+        {
+          "log-user-identifier": "true"
+        }
+      ]
+    }
+  ]
+}
