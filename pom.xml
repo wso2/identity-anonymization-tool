@@ -288,7 +288,7 @@
         <build.helper.plugin.version>1.8</build.helper.plugin.version>
         <antrun.plugin.version>1.7</antrun.plugin.version>
         <appasembler.plugin.version>2.0.0</appasembler.plugin.version>
-        <jacoco.version>0.7.9</jacoco.version>
+        <jacoco.version>0.8.3</jacoco.version>
         <commons-codec.version>1.4</commons-codec.version>
 
         <org.junit.version>3.8.1</org.junit.version>
