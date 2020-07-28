@@ -311,6 +311,7 @@
         <swagger-jaxrs.version>1.5.20</swagger-jaxrs.version>
         <com.fasterxml.jackson.version>2.9.6</com.fasterxml.jackson.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+        <istack.version>3.0.11</istack.version>
     </properties>
 
 </project>
