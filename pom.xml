@@ -272,7 +272,7 @@
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
 
-        <carbon.datasource.version>1.0.3</carbon.datasource.version>
+        <carbon.datasource.version>1.0.4</carbon.datasource.version>
 
         <com.h2database.version>1.4.199</com.h2database.version>
 
