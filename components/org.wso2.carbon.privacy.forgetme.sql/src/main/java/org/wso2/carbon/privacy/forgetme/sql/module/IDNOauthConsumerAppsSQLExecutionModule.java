@@ -52,7 +52,7 @@ public class IDNOauthConsumerAppsSQLExecutionModule implements Module<Map<String
 
         try {
             dataSource = dataSourceConfig.getDatasource();
-            if (log.isDebugEnabled()) {
+            if (dataSource != null && log.isDebugEnabled()) {
                 log.debug("Data source initialized with name: {}.", dataSource.getClass());
             }
         } catch (SQLModuleException e) {

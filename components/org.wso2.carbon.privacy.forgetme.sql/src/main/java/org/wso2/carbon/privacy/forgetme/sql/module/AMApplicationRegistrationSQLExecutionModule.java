@@ -53,7 +53,7 @@ public class AMApplicationRegistrationSQLExecutionModule implements Module<Map<S
 
         try {
             dataSource = dataSourceConfig.getDatasource();
-            if (log.isDebugEnabled()) {
+            if (dataSource != null && log.isDebugEnabled()) {
                 log.debug("Data source initialized with name: {}.", dataSource.getClass());
             }
         } catch (SQLModuleException e) {
