@@ -2,6 +2,8 @@
 
 ## How to Build
 
+**Make sure you have JDK 8 (JDK 11 not supported)**
+
 ```
 mvn clean install
 mvn package
