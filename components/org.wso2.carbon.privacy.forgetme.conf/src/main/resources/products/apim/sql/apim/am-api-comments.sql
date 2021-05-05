@@ -1,3 +1,3 @@
 UPDATE AM_API_COMMENTS
-SET COMMENTED_USER = `pseudonym`
-WHERE COMMENTED_USER = `username`
+SET CREATED_BY = `pseudonym`
+WHERE CREATED_BY = `username`
