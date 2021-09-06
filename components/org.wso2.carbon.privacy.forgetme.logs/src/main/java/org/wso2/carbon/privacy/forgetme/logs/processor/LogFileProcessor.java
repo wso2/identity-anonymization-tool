@@ -20,8 +20,8 @@ package org.wso2.carbon.privacy.forgetme.logs.processor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.privacy.forgetme.api.report.ReportAppender;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 import org.wso2.carbon.privacy.forgetme.logs.LogProcessorConstants;
@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public class LogFileProcessor {
 
-    private static Logger log = LoggerFactory.getLogger(LogFileProcessor.class);
+    private static Log log = LogFactory.getLog(LogFileProcessor.class);
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
     private static final String TEMP_FILE_PREFIX = "anon-";
@@ -64,7 +64,7 @@ public class LogFileProcessor {
         for (File file : fileList) {
             reportAppender.appendSection("Starting File %s", file.getAbsolutePath());
             if (log.isDebugEnabled()) {
-                log.debug("Reading log file {}.", file.getName());
+                log.debug("Reading log file {}." + file.getName());
             }
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
@@ -92,12 +92,12 @@ public class LogFileProcessor {
                                         .getPseudonym());
                                 reportAppender.append("Replaced, %d, %b", lineReader.getLineNumber(), true);
                                 if (log.isDebugEnabled()) {
-                                    log.debug("Replaced {}", lineReader.getLineNumber());
+                                    log.debug("Replaced {}" + lineReader.getLineNumber());
                                 }
                             } else {
                                 reportAppender.append("Not Replaced, %d, %b", lineReader.getLineNumber(), true);
                                 if (log.isDebugEnabled()) {
-                                    log.debug("Not replaced {}", lineReader.getLineNumber());
+                                    log.debug("Not replaced {}" + lineReader.getLineNumber());
                                 }
                             }
                         }
@@ -114,7 +114,7 @@ public class LogFileProcessor {
             } catch (Exception ex) {
                 throw new LogProcessorException("Error occurred while processing log file.", ex);
             }
-            log.info("Completed scanning log file: {}", file);
+            log.info("Completed scanning log file: {}" + file);
             reportAppender.appendSectionEnd("Completed " + file);
         }
     }
@@ -124,7 +124,7 @@ public class LogFileProcessor {
         List<MatchAndReplace> result = new ArrayList<>(patternList.size());
         for (Patterns.Pattern pattern : patternList) {
             if (log.isDebugEnabled()) {
-                log.debug("Compiling pattern {}.", pattern.getKey());
+                log.debug("Compiling pattern {}." + pattern.getKey());
             }
             String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(), templatePatternData)
                     .trim();
