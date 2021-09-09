@@ -36,16 +36,6 @@
             <artifactId>commons-text</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
             <groupId>org.wso2.carbon.privacy</groupId>
             <artifactId>org.wso2.carbon.privacy.forgetme.api</artifactId>
         </dependency>
