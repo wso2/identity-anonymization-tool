@@ -18,8 +18,8 @@
 
 package org.wso2.carbon.privacy.forgetme.logs.instructions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.privacy.forgetme.api.runtime.Environment;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ForgetMeInstruction;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ModuleException;
@@ -46,7 +46,7 @@ import javax.xml.bind.Unmarshaller;
  */
 public class LogFileInstructionReader implements InstructionReader {
 
-    private static final Logger log = LoggerFactory.getLogger(LogFileInstructionReader.class);
+    private static final Log log = LogFactory.getLog(LogFileInstructionReader.class);
 
     private static final String NAME = "log-file";
     private static final String LOG_FILE_PATH_PROPERTY = "log-file-path";
