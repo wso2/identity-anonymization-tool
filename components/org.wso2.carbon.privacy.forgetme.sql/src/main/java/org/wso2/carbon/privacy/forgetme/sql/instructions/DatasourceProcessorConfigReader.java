@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.privacy.forgetme.sql.instructions;
 
+import org.wso2.carbon.config.ConfigProviderFactory;
+import org.wso2.carbon.config.ConfigurationException;
+import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.DataSourceManager;
 import org.wso2.carbon.datasource.core.exception.DataSourceException;
 import org.wso2.carbon.privacy.forgetme.api.runtime.ProcessorConfigReader;
@@ -42,8 +45,9 @@ public class DatasourceProcessorConfigReader implements ProcessorConfigReader<Da
         DataSourceManager dataSourceManager = DataSourceManager.getInstance();
 
         try {
-            dataSourceManager.initDataSources(path.toAbsolutePath().toString());
-        } catch (DataSourceException e) {
+            ConfigProvider configProvider = ConfigProviderFactory.getConfigProvider(path);
+            dataSourceManager.initDataSources(configProvider);
+        } catch (DataSourceException | ConfigurationException e) {
             throw new SQLModuleException("Error occurred while initializing the data source.", e);
         }
 
