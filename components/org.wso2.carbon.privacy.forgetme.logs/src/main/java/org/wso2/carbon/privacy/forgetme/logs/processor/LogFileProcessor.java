@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public class LogFileProcessor {
 
-    private static Log log = LogFactory.getLog(LogFileProcessor.class);
+    private static Log LOG = LogFactory.getLog(LogFileProcessor.class);
 
     private final static Charset ENCODING = StandardCharsets.UTF_8;
     private static final String TEMP_FILE_PREFIX = "anon-";
@@ -63,8 +63,8 @@ public class LogFileProcessor {
         List<MatchAndReplace> compiledPatterns = compile(patternList, templatePatternData);
         for (File file : fileList) {
             reportAppender.appendSection("Starting File %s", file.getAbsolutePath());
-            if (log.isDebugEnabled()) {
-                log.debug("Reading log file {}." + file.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Reading log file : " + file.getName());
             }
             try (BufferedReader reader = Files.newBufferedReader(file.toPath(), ENCODING);
                     LineNumberReader lineReader = new LineNumberReader(reader);
@@ -91,13 +91,13 @@ public class LogFileProcessor {
                                 replacement = replacement.replaceAll(formattedReplacePattern, userIdentifier
                                         .getPseudonym());
                                 reportAppender.append("Replaced, %d, %b", lineReader.getLineNumber(), true);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Replaced {}" + lineReader.getLineNumber());
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Replaced " + lineReader.getLineNumber());
                                 }
                             } else {
                                 reportAppender.append("Not Replaced, %d, %b", lineReader.getLineNumber(), true);
-                                if (log.isDebugEnabled()) {
-                                    log.debug("Not replaced {}" + lineReader.getLineNumber());
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Not replaced " + lineReader.getLineNumber());
                                 }
                             }
                         }
@@ -109,12 +109,12 @@ public class LogFileProcessor {
                     }
                 }
             } catch (IOException ex) {
-                log.error("Error occurred while file read/write operation.", ex);
+                LOG.error("Error occurred while file read/write operation.", ex);
                 throw new LogProcessorException(ex);
             } catch (Exception ex) {
                 throw new LogProcessorException("Error occurred while processing log file.", ex);
             }
-            log.info("Completed scanning log file: {}" + file);
+            LOG.info("Completed scanning log file: " + file);
             reportAppender.appendSectionEnd("Completed " + file);
         }
     }
@@ -123,8 +123,8 @@ public class LogFileProcessor {
 
         List<MatchAndReplace> result = new ArrayList<>(patternList.size());
         for (Patterns.Pattern pattern : patternList) {
-            if (log.isDebugEnabled()) {
-                log.debug("Compiling pattern {}." + pattern.getKey());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Compiling pattern " + pattern.getKey());
             }
             String formattedDetectPattern = StrSubstitutor.replace(pattern.getDetectPattern(), templatePatternData)
                     .trim();
@@ -146,12 +146,12 @@ public class LogFileProcessor {
         if (Files.exists(filePath)) {
 
             try {
-                log.info("Deleting File From The Configured Path: " + filePath.toString());
+                LOG.info("Deleting File From The Configured Path: " + filePath.toString());
 
                 Files.delete(filePath);
                 Path tempFilePath = Paths.get(filePath + TEMP_FILE_PREFIX);
                 Files.move(tempFilePath, tempFilePath.resolveSibling(fileName));
-                log.info("Renamed the temp file '" + fileName + ".temp' to '" + fileName + "'");
+                LOG.info("Renamed the temp file '" + fileName + ".temp' to '" + fileName + "'");
 
             } catch (IOException ex) {
                 throw new LogProcessorException("Error occurred while delete/rename file operation.", ex);
