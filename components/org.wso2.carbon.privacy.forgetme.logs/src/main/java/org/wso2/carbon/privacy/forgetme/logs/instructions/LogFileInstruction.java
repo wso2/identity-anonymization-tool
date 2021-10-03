@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class LogFileInstruction implements ForgetMeInstruction {
 
-    private static final Log log = LogFactory.getLog(LogFileInstruction.class);
+    private static final Log LOG = LogFactory.getLog(LogFileInstruction.class);
 
     private List<Patterns.Pattern> patterns;
     private File logFile;
@@ -60,8 +60,8 @@ public class LogFileInstruction implements ForgetMeInstruction {
         logFiles.add(logFile);
         LogFileProcessor logFileProcessor = new LogFileProcessor();
 
-        if (log.isDebugEnabled()) {
-            log.debug("File {} is being processed." + logFile.getName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("File being processed : " + logFile.getName());
         }
 
         logFileProcessor.processFiles(userIdentifier, reportAppender, patterns, logFiles);
