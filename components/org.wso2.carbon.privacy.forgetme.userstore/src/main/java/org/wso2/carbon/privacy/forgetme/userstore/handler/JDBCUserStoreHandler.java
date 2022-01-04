@@ -23,9 +23,6 @@ package org.wso2.carbon.privacy.forgetme.userstore.handler;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.config.ConfigProviderFactory;
-import org.wso2.carbon.config.ConfigurationException;
-import org.wso2.carbon.config.provider.ConfigProvider;
 import org.wso2.carbon.datasource.core.DataSourceManager;
 import org.wso2.carbon.datasource.core.beans.CarbonDataSource;
 import org.wso2.carbon.datasource.core.beans.DataSourceMetadata;
@@ -101,15 +98,13 @@ public class JDBCUserStoreHandler extends UserStoreHandler {
 
             preparedStatement.execute();
 
-        } catch (SQLException | ClassNotFoundException | DataSourceException |
-                UserStoreModuleException | ConfigurationException e) {
+        } catch (SQLException | ClassNotFoundException | DataSourceException | UserStoreModuleException e) {
             throw new UserStoreModuleException("An error occurred while renaming a user in an JDBC user store.", e);
         }
     }
 
-    private Connection getConnection()
-            throws SQLException, ClassNotFoundException, DataSourceException, UserStoreModuleException,
-            ConfigurationException {
+    private Connection getConnection() throws SQLException, ClassNotFoundException,
+            DataSourceException, UserStoreModuleException {
 
         if (isDatabaseConfiguredInline()) {
 
@@ -156,33 +151,28 @@ public class JDBCUserStoreHandler extends UserStoreHandler {
         return StringUtils.isNotBlank(getRealmConfiguration().getUserStoreProperty(USER_STORE_PROPERTY_DATA_SOURCE));
     }
 
-    private Connection getConnectionFromUserStoreDataSource()
-            throws DataSourceException, UserStoreModuleException, SQLException, ConfigurationException {
+    private Connection getConnectionFromUserStoreDataSource() throws DataSourceException, UserStoreModuleException, SQLException {
 
         String dataSourceName = getRealmConfiguration().getUserStoreProperty(USER_STORE_PROPERTY_DATA_SOURCE);
         DataSource dataSource = getDataSourceByJNDIName(dataSourceName);
         return dataSource.getConnection();
     }
 
-    private Connection getConnectionFromRealmDataSource()
-            throws DataSourceException, UserStoreModuleException, SQLException, ConfigurationException {
+    private Connection getConnectionFromRealmDataSource() throws DataSourceException, UserStoreModuleException, SQLException {
 
         String dataSourceName = getRealmConfiguration().getRealmProperty(USER_STORE_PROPERTY_DATA_SOURCE);
         DataSource dataSource = getDataSourceByJNDIName(dataSourceName);
         return dataSource.getConnection();
     }
 
-    private DataSource getDataSourceByJNDIName(String jndiName)
-            throws DataSourceException, UserStoreModuleException, ConfigurationException {
+    private DataSource getDataSourceByJNDIName(String jndiName) throws DataSourceException, UserStoreModuleException {
 
         if (log.isDebugEnabled()) {
             log.debug(String.format("Looking for the data source for the JNDI name : '%s'", jndiName));
         }
 
         DataSourceManager dataSourceManager = DataSourceManager.getInstance();
-        ConfigProvider configProvider =
-                ConfigProviderFactory.getConfigProvider(getCarbonHome().resolve(CARBON_DATA_SOURCES_DIRECTORY));
-        dataSourceManager.initDataSources(configProvider);
+        dataSourceManager.initDataSources(getCarbonHome().resolve(CARBON_DATA_SOURCES_DIRECTORY).toString());
 
         if (dataSourceManager.getDataSourceRepository() != null) {
 

@@ -281,7 +281,7 @@
         <java.source.version>1.8</java.source.version>
         <java.target.version>1.8</java.target.version>
 
-        <carbon.datasource.version>1.1.10</carbon.datasource.version>
+        <carbon.datasource.version>1.0.4</carbon.datasource.version>
 
         <com.h2database.version>1.4.199</com.h2database.version>
 
@@ -316,7 +316,7 @@
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.impl.version>2.3.2</jaxb.impl.version>
         <gson.version>2.8.5</gson.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.6</commons-io.version>
 
         <cxf-bundle.version>3.2.8</cxf-bundle.version>
         <jackson.version>1.9.11</jackson.version>
