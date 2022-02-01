@@ -58,7 +58,7 @@
         <repository>
             <id>wso2-nexus</id>
             <name>WSO2 internal Repository</name>
-            <url>http://maven.wso2.org/nexus/content/groups/wso2-public/</url>
+            <url>https://maven.wso2.org/nexus/content/groups/wso2-public/</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
@@ -68,7 +68,7 @@
         <repository>
             <id>wso2.releases</id>
             <name>WSO2 Releases Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/releases/</url>
+            <url>https://maven.wso2.org/nexus/content/repositories/releases/</url>
             <releases>
                 <enabled>true</enabled>
                 <updatePolicy>daily</updatePolicy>
@@ -169,14 +169,19 @@
             </dependency>
 
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${org.slf4j.version}</version>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>${commons.logging.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${org.slf4j.version}</version>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>${log4j.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-jcl</artifactId>
+                <version>${log4j.jcl.version}</version>
             </dependency>
 
             <dependency>
@@ -281,7 +286,7 @@
         <org.apache.commons.version>1.6</org.apache.commons.version>
         <com.googlecode.json.simple.version>1.1.1</com.googlecode.json.simple.version>
 
-        <org.slf4j.version>1.7.26</org.slf4j.version>
+        <commons.logging.version>1.2</commons.logging.version>
 
         <maven.surefire.plugin.version>2.22.1</maven.surefire.plugin.version>
         <maven.resource.plugin.version>3.1.0</maven.resource.plugin.version>
@@ -294,6 +299,10 @@
 
         <org.junit.version>3.8.1</org.junit.version>
         <org.testng.version>6.14.3</org.testng.version>
+
+        <!-- Log4j -->
+        <log4j.core.version>2.14.1</log4j.core.version>
+        <log4j.jcl.version>2.14.1</log4j.jcl.version>
 
         <!-- Carbon component versions -->
         <carbon.kernel.version>4.6.1-alpha</carbon.kernel.version>
