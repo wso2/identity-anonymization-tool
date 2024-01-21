@@ -243,6 +243,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.1</version>
                 <executions>
                     <execution>
                         <id>dist</id>
