@@ -22,7 +22,7 @@
       "type": "datasource",
       "processor" : "rdbms",
       "properties" : [
-        {"identity": "WSO2_CARBON_DB"}
+        {"identity": "WSO2_IDENTITY_DB", "user": "WSO2_SHARED_DB"}
       ]
     }
   ]

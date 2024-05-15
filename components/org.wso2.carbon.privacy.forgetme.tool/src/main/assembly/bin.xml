@@ -48,7 +48,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/carbon-4.4.x</directory>
+            <directory>${basedir}/../org.wso2.carbon.privacy.forgetme.conf/target/conf/carbon</directory>
             <outputDirectory>identity-anonymization-tool-${pom.version}/conf</outputDirectory>
             <fileMode>644</fileMode>
         </fileSet>
