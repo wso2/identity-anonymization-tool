@@ -29,6 +29,8 @@ import org.wso2.carbon.privacy.forgetme.sql.sql.UserSQLQuery;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLSyntaxErrorException;
+
 import javax.sql.DataSource;
 
 /**
@@ -95,6 +97,14 @@ public class DomainAppendedSQLExecutionModule implements Module<UserSQLQuery> {
 
             if (log.isDebugEnabled()) {
                 log.debug("Executed the sql query: {}.", userSQLQuery.getSqlQuery().toString());
+            }
+        } catch (SQLSyntaxErrorException e) {
+            if (e.getMessage().contains("WF_BPS_PROFILE") || e.getMessage().contains("WF_REQUEST")) {
+                log.warn("Workflow feature is not enabled. Skipping the execution of the sql query: " +
+                        userSQLQuery.getSqlQuery().getSqlQuery());
+            } else {
+                throw new SQLModuleException(
+                        "Error occurred while executing the sql query: " + userSQLQuery.getSqlQuery().getSqlQuery(), e);
             }
         } catch (SQLException e) {
             throw new SQLModuleException(e);
