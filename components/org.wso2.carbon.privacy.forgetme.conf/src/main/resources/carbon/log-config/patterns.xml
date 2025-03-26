@@ -58,4 +58,9 @@
         <replacePattern>${username}@${tenantDomain}</replacePattern>
     </pattern>
 
+    <pattern key="pattern8">
+        <detectPattern>(TID: )\[${tenantId}\](.)*(Remote audit server logging configuration updated successfully with url:)(.*)(by user:)(\s)*${username}(\s)*(for appender:)</detectPattern>
+        <replacePattern>${username}</replacePattern>
+    </pattern>
+
 </patterns>
