@@ -18,7 +18,7 @@
 
 package org.wso2.carbon.privacy.forgetme.sql.sql;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.wso2.carbon.privacy.forgetme.api.user.UserIdentifier;
 
 /**
