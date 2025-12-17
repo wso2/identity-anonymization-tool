@@ -277,7 +277,7 @@
 
         <carbon.datasource.version>1.0.4</carbon.datasource.version>
 
-        <com.h2database.version>2.1.210</com.h2database.version>
+        <com.h2database.version>2.2.220</com.h2database.version>
 
         <commons.lang3.version>3.19.0.wso2v1</commons.lang3.version>
         <commons.cli.version>1.3.1</commons.cli.version>
