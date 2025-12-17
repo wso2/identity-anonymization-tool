@@ -165,8 +165,8 @@
                     <artifactId>axiom-impl</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>commons-lang.wso2</groupId>
-                    <artifactId>commons-lang</artifactId>
+                    <groupId>org.wso2.orbit.org.apache.commons</groupId>
+                    <artifactId>commons-lang3</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>jline</groupId>
